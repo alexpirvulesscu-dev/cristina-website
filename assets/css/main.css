@@ -108,6 +108,19 @@ p a { border-bottom: 1px solid var(--line); }
 }
 .nav-logo img { width: 185px; height: auto; opacity: 0.95; transition: filter 0.45s ease; }
 .nav-links { display: flex; align-items: center; gap: 34px; font-size: 14px; }
+/* hamburger toggle — hidden on desktop, shown at the mobile breakpoint */
+.nav-toggle {
+  display: none;
+  flex-direction: column; justify-content: center; align-items: center; gap: 6px;
+  width: 42px; height: 42px; padding: 0;
+  background: none; border: none; cursor: pointer;
+  color: var(--heading);
+  z-index: 60;
+}
+.nav-toggle span { display: block; width: 24px; height: 1.5px; background: currentColor; transition: transform 0.3s ease, opacity 0.3s ease; }
+.nav.on-dark:not(.is-open) .nav-toggle { color: #f0f4f8; }
+.nav.is-open .nav-toggle span:nth-child(1) { transform: translateY(3.75px) rotate(45deg); }
+.nav.is-open .nav-toggle span:nth-child(2) { transform: translateY(-3.75px) rotate(-45deg); }
 .nav-links a { color: var(--muted); transition: color 0.25s; position: relative; }
 .nav-links a:hover { color: var(--heading); }
 .nav-links a.nav-cta {
@@ -119,11 +132,13 @@ p a { border-bottom: 1px solid var(--line); }
 }
 .nav-links a.nav-cta:hover { border-color: var(--olive); background: rgba(168, 203, 160, 0.18); }
 /* dark-hero phase */
-.nav.on-dark .nav-logo img { filter: invert(1); }
-.nav.on-dark .nav-links a { color: rgba(240, 244, 248, 0.72); }
-.nav.on-dark .nav-links a:hover { color: #f0f4f8; }
-.nav.on-dark .nav-links a.nav-cta { color: #f0f4f8; border-color: var(--line-light); }
-.nav.on-dark .nav-links a.nav-cta:hover { border-color: var(--sage); background: rgba(168, 203, 160, 0.12); }
+/* dark-hero nav styling only applies when the mobile menu is NOT open
+   (an open menu is a light panel and needs dark text + the plain logo) */
+.nav.on-dark:not(.is-open) .nav-logo img { filter: invert(1); }
+.nav.on-dark:not(.is-open) .nav-links a { color: rgba(240, 244, 248, 0.72); }
+.nav.on-dark:not(.is-open) .nav-links a:hover { color: #f0f4f8; }
+.nav.on-dark:not(.is-open) .nav-links a.nav-cta { color: #f0f4f8; border-color: var(--line-light); }
+.nav.on-dark:not(.is-open) .nav-links a.nav-cta:hover { border-color: var(--sage); background: rgba(168, 203, 160, 0.12); }
 .nav.on-dark.is-scrolled { background: rgba(30, 39, 32, 0.72); border-bottom-color: var(--line-light); }
 
 /* ---------- buttons ---------- */
@@ -652,9 +667,38 @@ p a { border-bottom: 1px solid var(--line); }
   .nav-links { gap: 20px; font-size: 13px; }
   .nav-logo img { width: 104px; }
 }
-@media (max-width: 600px) {
-  /* keep only the logo and the consultation pill in the nav */
-  .nav-links a:not(.nav-cta) { display: none; }
+/* ---------- mobile navigation: hamburger → full-screen menu ---------- */
+@media (max-width: 760px) {
+  .nav-toggle { display: flex; }
+  .nav-links {
+    position: fixed; inset: 0;
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 30px;
+    padding: 80px 32px;
+    background: var(--bg);
+    font-size: 22px;
+    opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity 0.32s ease, transform 0.32s ease, visibility 0.32s;
+    z-index: 45;
+  }
+  .nav.is-open .nav-links { opacity: 1; visibility: visible; transform: none; }
+  .nav.is-open .nav-links a { color: var(--muted) !important; }
+  .nav.is-open .nav-links a[aria-current="page"] { color: var(--heading) !important; }
+  .nav.is-open .nav-links a.nav-cta {
+    color: var(--heading) !important;
+    border: 1px solid rgba(75, 78, 84, 0.3) !important;
+    border-radius: 999px; padding: 12px 32px; margin-top: 8px;
+  }
+  /* the logo must read dark over the light menu, even during the hero dark phase */
+  .nav.is-open .nav-logo img { filter: none !important; }
+}
+
+/* ---------- small phones: keep the big hero type inside the screen ---------- */
+@media (max-width: 560px) {
+  .hero-h1 { font-size: clamp(38px, 11.5vw, 60px); }
+  .hero-h2 { font-size: clamp(30px, 8.5vw, 46px); top: 54vh; }
+  .hero-sub { font-size: 15px; }
+  .section-title { font-size: clamp(32px, 8.5vw, 46px); }
 }
 
 /* ---------- reduced motion: everything readable, nothing moves ---------- */

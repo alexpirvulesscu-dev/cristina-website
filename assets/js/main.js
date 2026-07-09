@@ -20,6 +20,27 @@
   window.addEventListener("scroll", onScrollNav, { passive: true });
   onScrollNav();
 
+  /* ---------- mobile menu: hamburger open/close ---------- */
+  var navToggle = document.getElementById("nav-toggle");
+  if (navToggle) {
+    var closeMenu = function () {
+      nav.classList.remove("is-open");
+      navToggle.setAttribute("aria-expanded", "false");
+    };
+    navToggle.addEventListener("click", function () {
+      var open = nav.classList.toggle("is-open");
+      navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    // close after tapping any link (anchor or page link)
+    nav.querySelectorAll(".nav-links a").forEach(function (a) {
+      a.addEventListener("click", closeMenu);
+    });
+    // close on Escape
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeMenu();
+    });
+  }
+
   /* ---------- consultation form → mailto draft ---------- */
   var form = document.getElementById("consult-form");
   if (form) {
