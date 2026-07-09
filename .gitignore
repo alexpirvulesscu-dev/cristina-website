@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Private source material — must NOT be published
+# (the website only uses the processed images inside assets/)
+Cases.pdf
+Cristina1.jpeg
+Cristina2.jpeg
+Cristina3.jpeg
+Cristina4.jpeg
+Cristina Pirvulescu Logo.png
+
+# Local editor / tooling config
+.claude/
