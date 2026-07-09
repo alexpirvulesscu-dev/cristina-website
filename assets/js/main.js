@@ -109,6 +109,9 @@
     }
   });
   heroTl
+    // the resting eyebrow label fades out immediately on scroll, so the
+    // rising title never collides with it (matters most on tall phones)
+    .to(".hero-eyebrow", { opacity: 0, ease: "none", duration: 0.06 }, 0)
     // A — only her head shows at first; the title sharpens from haze while
     //     she rises out of the dark (0 → 0.24)
     .fromTo("#hero-line1",
