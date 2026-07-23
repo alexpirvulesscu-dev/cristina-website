@@ -123,22 +123,25 @@ p a { border-bottom: 1px solid var(--line); }
 .nav.is-open .nav-toggle span:nth-child(2) { transform: translateY(-3.75px) rotate(-45deg); }
 .nav-links a { color: var(--muted); transition: color 0.25s; position: relative; }
 .nav-links a:hover { color: var(--heading); }
+/* the nav CTA is a solid pill in the brand accent green, on every background */
 .nav-links a.nav-cta {
-  color: var(--heading);
-  border: 1px solid rgba(75, 78, 84, 0.3);
+  color: #f7faf5;
+  background: var(--olive);
+  border: 1px solid var(--olive);
   border-radius: 999px;
   padding: 9px 20px;
   transition: border-color 0.25s, background 0.25s, color 0.25s;
 }
-.nav-links a.nav-cta:hover { border-color: var(--olive); background: rgba(168, 203, 160, 0.18); }
+.nav-links a.nav-cta:hover { background: var(--olive-deep); border-color: var(--olive-deep); color: #f7faf5; }
 /* dark-hero phase */
 /* dark-hero nav styling only applies when the mobile menu is NOT open
    (an open menu is a light panel and needs dark text + the plain logo) */
 .nav.on-dark:not(.is-open) .nav-logo img { filter: invert(1); }
 .nav.on-dark:not(.is-open) .nav-links a { color: rgba(240, 244, 248, 0.72); }
 .nav.on-dark:not(.is-open) .nav-links a:hover { color: #f0f4f8; }
-.nav.on-dark:not(.is-open) .nav-links a.nav-cta { color: #f0f4f8; border-color: var(--line-light); }
-.nav.on-dark:not(.is-open) .nav-links a.nav-cta:hover { border-color: var(--sage); background: rgba(168, 203, 160, 0.12); }
+/* the CTA keeps its solid accent fill on the dark hero too */
+.nav.on-dark:not(.is-open) .nav-links a.nav-cta { color: #f7faf5; background: var(--olive); border-color: var(--olive); }
+.nav.on-dark:not(.is-open) .nav-links a.nav-cta:hover { background: var(--olive-deep); border-color: var(--olive-deep); }
 .nav.on-dark.is-scrolled { background: rgba(30, 39, 32, 0.72); border-bottom-color: var(--line-light); }
 
 /* nav chrome fades in only once the big logo has settled into the corner.
@@ -390,54 +393,64 @@ p a { border-bottom: 1px solid var(--line); }
 .step-label { padding-top: 6px; }
 
 /* ---------- story ---------- */
+/* the whole section is sized to sit on one screen — no scrolling to finish it */
 .story {
-  padding: clamp(90px, 14vh, 160px) var(--gutter);
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(48px, 7vh, 84px) var(--gutter);
   padding-right: 0;               /* her photo bleeds to the screen edge */
 }
 .story-inner { max-width: none; margin: 0; }
 .story-eyebrow-wrap, .story-route { max-width: 1180px; }
 .story-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);  /* text | her photo dominates */
-  gap: clamp(32px, 5vw, 80px);
-  align-items: stretch;            /* text column spans the photo's full height */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);  /* text | her photo, half each */
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
 }
 .story-text {
   max-width: 620px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;  /* paragraphs distribute evenly, ending with the photo */
-  gap: 28px;
+  gap: 18px;
 }
 .story-photo {
-  margin: 0;                      /* top-aligned with the first story line */
+  margin: 0;
+  display: flex;
+  justify-content: flex-end;      /* she stays hard against the screen edge */
+  align-items: flex-end;
 }
 .story-photo img {
-  width: 100%;                    /* fills the whole photo column — her size */
+  /* fills her half of the screen, but height-capped so the section always
+     fits one screen — contain keeps her undistorted on short viewports */
+  width: 100%;
   height: auto;
+  max-height: 70vh;
+  object-fit: contain; object-position: bottom right;
   /* background-removed cutout: shadow follows her outline, not a box */
   filter: drop-shadow(0 22px 44px rgba(44, 48, 54, 0.22));
 }
 .story-route {
   display: flex; align-items: center; gap: 14px;
-  margin: 8px 0 54px;
+  margin: 6px 0 30px;
   color: var(--muted);
   font-size: 14px;                /* slightly bigger than the standard mono */
   letter-spacing: 0.1em;
 }
 .story-route i { flex: 1; height: 1px; background: rgba(75, 78, 84, 0.28); transform-origin: left; }
 .story-route span:last-child { color: var(--olive); }
-.story-text .story-line { margin-bottom: 0; color: var(--muted); font-size: clamp(19px, 2.1vw, 25px); line-height: 1.65; }
+/* body-sized, matching the rest of the site — the section reads in one screen */
+.story-text .story-line { margin-bottom: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
 .story-text .story-line:first-child { color: var(--ink); }
 .story-line.serif-pull {
   font-family: var(--serif);
   font-style: italic;
-  font-size: clamp(30px, 3.6vw, 46px);
-  line-height: 1.25;
+  font-size: 23px;
+  line-height: 1.35;
   color: var(--heading);
   border-left: 2px solid var(--sage);
-  padding-left: clamp(20px, 3vw, 40px);
-  margin: 0;
+  padding-left: clamp(16px, 2vw, 28px);
+  margin: 2px 0;
 }
 
 /* ---------- work ---------- */

@@ -185,11 +185,12 @@
   });
 
   /* ---------- story: line-by-line reveal + route draw ---------- */
-  gsap.utils.toArray(".story-line").forEach(function (line) {
-    gsap.from(line, {
-      scrollTrigger: { trigger: line, start: "top 85%", end: "top 55%", scrub: true },
-      y: 40, opacity: 0, ease: "none"
-    });
+  // the story now fits one screen, so the lines reveal together as a stagger
+  // rather than each being scrubbed individually (which would leave the lower
+  // ones invisible once the whole section is already in view)
+  gsap.from(".story-line", {
+    scrollTrigger: { trigger: ".story", start: "top 65%" },
+    y: 30, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.12
   });
   gsap.from(".story-route i", {
     scrollTrigger: { trigger: ".story-route", start: "top 85%" },
