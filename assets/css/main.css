@@ -397,16 +397,17 @@ p a { border-bottom: 1px solid var(--line); }
 .story {
   min-height: 100vh;
   display: flex; flex-direction: column; justify-content: center;
-  padding: clamp(48px, 7vh, 84px) var(--gutter);
+  padding: clamp(32px, 4.5vh, 56px) var(--gutter);
   padding-right: 0;               /* her photo bleeds to the screen edge */
 }
 .story-inner { max-width: none; margin: 0; }
 .story-eyebrow-wrap, .story-route { max-width: 1180px; }
 .story-layout {
   display: grid;
-  /* the copy is body-sized now, so give her the larger share of the width */
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: clamp(32px, 5vw, 72px);
+  /* the copy is body-sized now, so give her much the larger share of the width
+     — her rendered size is limited by column width, not height */
+  grid-template-columns: minmax(0, 0.68fr) minmax(0, 1.32fr);
+  gap: clamp(16px, 1.8vw, 32px);
   align-items: center;
 }
 .story-text {
@@ -420,13 +421,13 @@ p a { border-bottom: 1px solid var(--line); }
   display: flex;
   justify-content: center;        /* centred within her half, not jammed right */
   align-items: flex-end;
-  padding-right: clamp(12px, 1.8vw, 36px);   /* inset from the edge, centred in her half */
+  padding-right: clamp(6px, 0.8vw, 16px);   /* just off the edge, centred in her half */
 }
 .story-photo img {
   /* as large as her column allows while the section still fits one screen */
   width: 100%;
   height: auto;
-  max-height: 64vh;
+  max-height: 82vh;
   max-width: none;
   object-fit: contain; object-position: bottom center;
   /* background-removed cutout: shadow follows her outline, not a box */
@@ -439,10 +440,10 @@ p a { border-bottom: 1px solid var(--line); }
    and the connecting line draws itself between them */
 .story-route {
   display: flex; align-items: center; gap: clamp(14px, 2vw, 26px);
-  margin: 10px 0 38px;
+  margin: 6px 0 24px;
   max-width: 760px;
   color: var(--ink);
-  font-size: clamp(16px, 1.6vw, 20px);
+  font-size: clamp(13px, 1.3vw, 16px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }

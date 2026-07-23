@@ -167,7 +167,8 @@
   ScrollTrigger.create({
     trigger: ".method",
     start: "top top",
-    end: "+=140%",
+    end: "+=70%",              /* halved — the steps were advancing so slowly
+                                  it read as nothing happening while scrolling */
     pin: ".method-pin",
     scrub: true,
     onUpdate: function (self) {
