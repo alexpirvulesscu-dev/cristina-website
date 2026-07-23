@@ -64,7 +64,7 @@
   /* ---------- load-in: she and the first line are present immediately ----- */
   if (!reduced) {
     gsap.from(".hero-cutout", { opacity: 0, duration: 1.4, ease: "power2.out", delay: 0.1 });
-    gsap.from(".hero-eyebrow", { opacity: 0, duration: 1.0, delay: 0.6 });
+    gsap.from("#hero-logo", { opacity: 0, duration: 1.2, ease: "power2.out", delay: 0.25 });
   }
 
   if (reduced) return; // readable static page; no smooth scroll, no pins
@@ -90,6 +90,7 @@
      Phase C: the whole stage turns white; she is fully lit.               */
   var stage = document.querySelector(".hero-stage");
   if (stage) {
+  var navLogoImg = document.querySelector(".nav-logo img");
   var heroTl = gsap.timeline({
     scrollTrigger: {
       trigger: ".hero",
@@ -98,29 +99,42 @@
       pin: ".hero-stage",
       scrub: true,
       onUpdate: function (self) {
-        var light = self.progress > 0.4;
+        var light = self.progress > 0.62;
         stage.classList.toggle("is-light", light);
         nav.classList.toggle("on-dark", !light);
+        // the big hero logo owns the corner until it shrinks to nav size,
+        // then the real nav logo takes over (seamless — same mark)
+        if (navLogoImg) navLogoImg.style.opacity = self.progress < 0.4 ? "0" : "1";
       },
-      onLeave: function () { nav.classList.remove("on-dark"); },
+      onLeave: function () { nav.classList.remove("on-dark"); if (navLogoImg) navLogoImg.style.opacity = "1"; },
       onEnterBack: function () { nav.classList.add("on-dark"); }
     }
   });
   heroTl
-    // the resting eyebrow label fades out as you begin to scroll
-    .to(".hero-eyebrow", { opacity: 0, ease: "none", duration: 0.12 }, 0)
-    // the stage warms from deep green to light; she brightens with it
-    .to(".hero-stage", { backgroundColor: "#f0f4f8", ease: "none", duration: 0.32 }, 0.14)
+    // the big brand logo shrinks from ~half-screen back into the nav corner
+    .fromTo("#hero-logo",
+      { scale: 4.2 },
+      { scale: 1, ease: "power1.inOut", duration: 0.42 }, 0)
+    .to("#hero-logo", { opacity: 0, ease: "none", duration: 0.06 }, 0.42)
+    // Cristina rises: only her head shows at first, then her whole body moves up
     .fromTo("#hero-cutout",
-      { filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
-      { filter: "brightness(1.03) drop-shadow(0 30px 60px rgba(44,54,44,0.18))", ease: "none", duration: 0.32 }, 0.14)
+      { y: "62vh", filter: "brightness(0.9) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
+      { y: "0vh", filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.52 }, 0)
     .to(".scroll-hint", { opacity: 0, ease: "none", duration: 0.12 }, 0.1)
-    // she glides to the right; the headline, copy and CTAs rise in on the left
-    .to("#hero-cutout", { x: "24vw", ease: "none", duration: 0.36 }, 0.34)
+    // "It simply looks like you." revealed only once she is up (hidden until now)
+    .fromTo("#hero-line2",
+      { opacity: 0, y: 30, filter: "blur(8px)" },
+      { opacity: 1, y: 0, filter: "blur(0px)", ease: "none", duration: 0.16 }, 0.52)
+    // the stage warms to light; she brightens
+    .to(".hero-stage", { backgroundColor: "#f0f4f8", ease: "none", duration: 0.14 }, 0.64)
+    .to("#hero-cutout", { filter: "brightness(1.03) drop-shadow(0 30px 60px rgba(44,54,44,0.18))", ease: "none", duration: 0.14 }, 0.64)
+    // line 2 gives way; she glides right; the intro copy + CTAs come in on the left
+    .to("#hero-line2", { opacity: 0, y: -30, ease: "none", duration: 0.08 }, 0.8)
+    .to("#hero-cutout", { x: "24vw", ease: "none", duration: 0.16 }, 0.82)
     .fromTo("#hero-intro",
       { opacity: 0, x: -40 },
-      { opacity: 1, x: 0, ease: "none", duration: 0.26 }, 0.44)
-    .to({}, { duration: 0.12 }); // held beat before the hero releases
+      { opacity: 1, x: 0, ease: "none", duration: 0.14 }, 0.86)
+    .to({}, { duration: 0.08 }); // held beat before the hero releases
   }
 
   /* ---------- method: pinned analysis with stepped reveals ---------- */

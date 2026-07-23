@@ -238,26 +238,42 @@ p a { border-bottom: 1px solid var(--line); }
   50%      { opacity: 0.75; }
 }
 
+/* big brand logo on landing — anchored top-left, JS scales it up on landing
+   and shrinks it back into the nav corner on scroll */
+.hero-logo {
+  position: absolute;
+  top: 12px; left: var(--gutter);
+  z-index: 5;
+  width: 185px; height: auto;      /* nav-logo size at scale 1 */
+  transform-origin: top left;
+  filter: invert(1);               /* white mark on the dark stage */
+  pointer-events: none;
+}
 .hero-cutout {
   position: absolute;
   bottom: 0; left: 50%;
   transform: translateX(-50%);
   z-index: 2;
-  height: 86vh; width: auto; max-width: none;   /* visible on landing, head clears the nav */
+  height: 90vh; width: auto; max-width: none;
   filter: drop-shadow(0 30px 60px rgba(10, 16, 11, 0.4));
 }
-/* "It simply looks like you." — heads the intro block that appears on scroll */
-.hero-headline {
+/* "It simply looks like you." — centred, revealed over her on scroll */
+.hero-h2 {
+  position: absolute;
+  top: 56vh; left: 0; right: 0;
+  z-index: 3;
+  text-align: center;
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(40px, 5.2vw, 82px);
-  line-height: 1.02;
+  font-size: clamp(54px, 8.7vw, 126px);
+  line-height: 1.05;
   letter-spacing: -0.01em;
-  color: var(--heading);
-  margin: 0 0 22px;
+  color: #fafbf5;
+  text-shadow: 0 1px 3px rgba(18, 26, 18, 0.6), 0 6px 30px rgba(15, 20, 15, 0.5);
+  margin: 0;
 }
-.hero-headline em { font-style: italic; color: var(--olive); }
-/* intro block — appears after the stage turns light, as she slides right */
+.hero-h2 em { font-style: italic; color: #b9d3a4; }
+/* intro block — appears after she glides right */
 .hero-intro {
   position: absolute;
   top: 50%; left: var(--gutter);
