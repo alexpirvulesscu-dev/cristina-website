@@ -210,12 +210,18 @@
     var wipe = { p: 0 };
     gsap.to(wipe, {
       p: 1, ease: "none",
-      /* hold the BEFORE fully visible while the block enters; the wipe only
-         sweeps once the case is well into view. Full-face (tall) pairs wait
-         until the photo itself reaches the middle of the screen. */
-      scrollTrigger: block.classList.contains("case-tall")
-        ? { trigger: block.querySelector(".ba"), start: "center 52%", end: "center 18%", scrub: true }
-        : { trigger: block, start: "top 45%", end: "top 2%", scrub: true },
+      /* Anchored to the PHOTO itself (never the surrounding block, whose
+         height varies with how much text a case has, which made the timing
+         drift). The before is held while the photo rises into view, then the
+         wipe sweeps and is fully complete by the time the photo reaches the
+         middle of the screen — finishing at 55% leaves a small safety margin
+         so the after is never still sweeping once the case is centred. */
+      scrollTrigger: {
+        trigger: block.querySelector(".ba"),
+        start: "center 80%",
+        end: "center 55%",
+        scrub: true
+      },
       onUpdate: function () {
         var pct = wipe.p * 100;
         after.style.clipPath = "inset(0 " + (100 - pct) + "% 0 0)";
