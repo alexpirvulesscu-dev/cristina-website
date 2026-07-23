@@ -348,30 +348,6 @@ p a { border-bottom: 1px solid var(--line); }
   padding: 90px var(--gutter);
 }
 .method-media { position: relative; }
-/* the blank plate the video resolves out of, plus the sage scan line that
-   sweeps down it. Both are driven by GSAP when the section is reached. */
-.method-scan {
-  display: none;               /* only armed by JS — with JS off or reduced
-                                  motion the video is never covered */
-  position: absolute; inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  /* explicit start value — GSAP cannot animate clip-path out of `none` */
-  clip-path: inset(0% 0% 0% 0%);
-}
-.method-scan::before {          /* the blank plate itself */
-  content: "";
-  position: absolute; inset: 0;
-  background: #101710;
-  opacity: 1;
-}
-.method-scanline {
-  position: absolute; left: 0; right: 0; top: 0;
-  height: 2px;
-  background: var(--sage);
-  box-shadow: 0 0 18px 4px rgba(168, 203, 160, 0.55);
-  opacity: 0;
-}
 .method-media video {
   width: 100%;
   aspect-ratio: 4 / 5;
