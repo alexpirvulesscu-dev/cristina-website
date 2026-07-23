@@ -98,110 +98,30 @@
       pin: ".hero-stage",
       scrub: true,
       onUpdate: function (self) {
-        var light = self.progress > 0.56;
+        var light = self.progress > 0.4;
         stage.classList.toggle("is-light", light);
         nav.classList.toggle("on-dark", !light);
-        // ambient glow + centre-pulse only belong to the dark resting state
-        stage.classList.toggle("past-rest", self.progress > 0.04);
       },
       onLeave: function () { nav.classList.remove("on-dark"); },
-      onEnterBack: function () { nav.classList.remove("on-dark"); }
+      onEnterBack: function () { nav.classList.add("on-dark"); }
     }
   });
   heroTl
-    // the resting eyebrow label fades out immediately on scroll, so the
-    // rising title never collides with it (matters most on tall phones)
-    .to(".hero-eyebrow", { opacity: 0, ease: "none", duration: 0.06 }, 0)
-    // A — only her head shows at first; the title sharpens from haze while
-    //     she rises out of the dark (0 → 0.24)
-    .fromTo("#hero-line1",
-      { y: 20 },
-      { y: 0, ease: "none", duration: 0.24 }, 0)
-    .fromTo(".hero-h1-base",
-      { opacity: 0, filter: "blur(12px)" },   /* landing: title fully invisible */
-      { opacity: 1, filter: "blur(0px)", ease: "none", duration: 0.24 }, 0)
+    // the resting eyebrow label fades out as you begin to scroll
+    .to(".hero-eyebrow", { opacity: 0, ease: "none", duration: 0.12 }, 0)
+    // the stage warms from deep green to light; she brightens with it
+    .to(".hero-stage", { backgroundColor: "#f0f4f8", ease: "none", duration: 0.32 }, 0.14)
     .fromTo("#hero-cutout",
-      { y: "74vh", filter: "brightness(0.30) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
-      { y: "48vh", filter: "brightness(0.55) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.24 }, 0)
-    // hold the title sharp for a beat (0.24 → 0.30)
-    .to({}, { duration: 0.06 })
-    // B — title out, line 2 in over her; her full body arrives (0.30 → 0.48)
-    .to("#hero-line1", { opacity: 0, y: -46, ease: "none", duration: 0.12 }, 0.30)
-    .fromTo("#hero-line2",
-      { opacity: 0, filter: "blur(10px)", y: 30 },
-      { opacity: 1, filter: "blur(0px)", y: 0, ease: "none", duration: 0.14 }, 0.34)
-    .to("#hero-cutout",
-      { y: "0vh", filter: "brightness(0.85) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.18 }, 0.30)
-    // C — the stage turns light, she is fully lit (0.50 → 0.64)
-    .to(".hero-stage", { backgroundColor: "#f0f4f8", ease: "none", duration: 0.14 }, 0.50)
-    .to("#hero-cutout",
-      { filter: "brightness(1.03) drop-shadow(0 30px 60px rgba(44,54,44,0.18))", ease: "none", duration: 0.14 }, 0.50)
-    .to(".scroll-hint", { opacity: 0, ease: "none", duration: 0.08 }, 0.50)
-    // D — line 2 gives way; she glides to the right and the intro copy +
-    //     CTAs pop in on the left (0.68 → 0.90)
-    .to("#hero-line2", { opacity: 0, y: -30, ease: "none", duration: 0.08 }, 0.68)
-    .to("#hero-cutout", { x: "23vw", ease: "none", duration: 0.20 }, 0.70)
+      { filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
+      { filter: "brightness(1.03) drop-shadow(0 30px 60px rgba(44,54,44,0.18))", ease: "none", duration: 0.32 }, 0.14)
+    .to(".scroll-hint", { opacity: 0, ease: "none", duration: 0.12 }, 0.1)
+    // she glides to the right; the headline, copy and CTAs rise in on the left
+    .to("#hero-cutout", { x: "24vw", ease: "none", duration: 0.36 }, 0.34)
     .fromTo("#hero-intro",
-      { opacity: 0, x: -50 },
-      { opacity: 1, x: 0, ease: "none", duration: 0.14 }, 0.76)
-    .to({}, { duration: 0.10 }); // held beat before the hero releases
+      { opacity: 0, x: -40 },
+      { opacity: 1, x: 0, ease: "none", duration: 0.26 }, 0.44)
+    .to({}, { duration: 0.12 }); // held beat before the hero releases
   }
-
-  /* ---------- hero light: one drifting source drives the green bloom AND
-     the title's local clarity (reference behaviour: idle = slow drift near
-     centre, hover = the light eases toward the cursor). ---------- */
-  (function () {
-    var titleWrap = document.querySelector(".hero-title");
-    var reveal = document.querySelector(".hero-h1-reveal");
-    var glow = document.querySelector(".hero-glow");
-    if (!titleWrap || !reveal || !glow) return;
-
-    var lx = 0.5, ly = 0.5;          // light position, relative to the title box
-    var revealOp = 0;
-    var pointer = null, hovering = false;
-
-    stage.addEventListener("mousemove", function (e) {
-      pointer = { x: e.clientX, y: e.clientY };
-      hovering = true;
-    });
-    stage.addEventListener("mouseleave", function () { hovering = false; });
-
-    function tick(t) {
-      var resting = !stage.classList.contains("past-rest");
-      var tx, ty, targetOp;
-
-      if (resting && hovering && pointer) {
-        // the light leans toward the cursor; words near it clear up
-        var box = titleWrap.getBoundingClientRect();
-        tx = (pointer.x - box.left) / Math.max(box.width, 1);
-        ty = (pointer.y - box.top) / Math.max(box.height, 1);
-        tx = Math.max(-0.15, Math.min(1.15, tx));
-        ty = Math.max(-0.4, Math.min(1.6, ty));
-        targetOp = 0.5;                    /* muted colour — needs more presence */
-      } else if (resting) {
-        // idle: the light keeps drifting but reveals nothing — the title
-        // only appears on hover or scroll
-        tx = 0.5 + 0.07 * Math.sin(t * 2 * Math.PI / 11);
-        ty = 0.5 + 0.06 * Math.sin(t * 2 * Math.PI / 15 + 1.7);
-        targetOp = 0;
-      } else {
-        tx = lx; ty = ly; targetOp = 0;   // scrolled: the light lets go
-      }
-
-      lx += (tx - lx) * 0.09;             /* follows the cursor directly, not lazily */
-      ly += (ty - ly) * 0.09;
-      revealOp += (targetOp - revealOp) * 0.05;
-
-      reveal.style.setProperty("--mx", (lx * 100).toFixed(2) + "%");
-      reveal.style.setProperty("--my", (ly * 100).toFixed(2) + "%");
-      reveal.style.opacity = revealOp.toFixed(3);
-      // the bloom leans the same way, so light + clarity feel like one thing
-      glow.style.transform = "translate(calc(-50% + " + ((lx - 0.5) * 180).toFixed(1) +
-        "px), calc(-50% + " + ((ly - 0.5) * 140).toFixed(1) + "px))";
-    }
-    window.__heroLight = tick; // debug/testing handle
-    gsap.ticker.add(function () { tick(performance.now() / 1000); });
-  })();
 
   /* ---------- method: pinned analysis with stepped reveals ---------- */
   var steps = gsap.utils.toArray(".method-step");
