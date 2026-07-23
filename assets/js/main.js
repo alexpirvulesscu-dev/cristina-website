@@ -240,6 +240,11 @@
     y: 30, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.12
   });
 
+  gsap.from(".loc", {
+    scrollTrigger: { trigger: ".locations", start: "top 82%" },
+    y: 40, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.14
+  });
+
   /* ---------- consultation reveal ---------- */
   gsap.from(".consult-copy, .consult-form", {
     scrollTrigger: { trigger: ".consult", start: "top 75%" },
