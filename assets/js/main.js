@@ -107,7 +107,7 @@
   }
   function logoStartY() {
     var top = parseFloat(getComputedStyle(heroLogo).top) || 0;
-    return window.innerHeight * 0.30 - (heroLogo.offsetHeight * LOGO_BIG) / 2 - top;
+    return window.innerHeight * 0.27 - (heroLogo.offsetHeight * LOGO_BIG) / 2 - top;
   }
 
   var heroTl = gsap.timeline({
@@ -142,7 +142,7 @@
       { scale: 1, x: 0, y: 0, ease: "power1.inOut", duration: 0.5 }, 0)
     // Cristina rises: only her head shows at first, then her whole body moves up
     .fromTo("#hero-cutout",
-      { y: "42vh", filter: "brightness(0.9) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
+      { y: "32vh", filter: "brightness(0.9) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
       { y: "0vh", filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.52 }, 0)
     .to(".scroll-hint", { opacity: 0, ease: "none", duration: 0.12 }, 0.1)
     // "It simply looks like you." revealed only once she is up (hidden until now)

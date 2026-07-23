@@ -690,6 +690,16 @@ p a { border-bottom: 1px solid var(--line); }
   background: var(--panel);
   box-shadow: 0 18px 44px rgba(44, 48, 54, 0.08);
 }
+/* sets expectations right at the decision point, above the fields */
+.form-lead {
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.35;
+  color: var(--heading);
+  margin-bottom: 28px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
 .consult-form label {
   display: block;
   font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
