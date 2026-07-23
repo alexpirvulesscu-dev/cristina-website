@@ -52,7 +52,7 @@
       var subject = "Consultation request — " + name;
       var body = message + "\n\n— " + name + " (" + email + ")";
       window.location.href =
-        "mailto:consult@cpdentalaesthetics.com?subject=" +
+        "mailto:info@cpdentalaesthetics.com?subject=" +
         encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
     });
   }
@@ -89,8 +89,27 @@
      Phase B: line 1 gives way to "It simply looks like you." + footer copy.
      Phase C: the whole stage turns white; she is fully lit.               */
   var stage = document.querySelector(".hero-stage");
+  var heroLogo = document.getElementById("hero-logo");
   if (stage) {
+  // The big brand logo is THE logo on the home page — hide the nav's own copy
+  // so there is only ever one mark, and start with the nav chrome hidden.
   var navLogoImg = document.querySelector(".nav-logo img");
+  if (navLogoImg) navLogoImg.style.opacity = "0";
+  nav.classList.add("pre-logo");
+
+  var LOGO_BIG = 4.2; // landing scale — roughly half the screen
+
+  // Offsets that place the (top-left-anchored) logo, scaled up, centred on
+  // screen. Function-based so GSAP recomputes them on every refresh/resize.
+  function logoStartX() {
+    var left = parseFloat(getComputedStyle(heroLogo).left) || 0;
+    return window.innerWidth / 2 - (heroLogo.offsetWidth * LOGO_BIG) / 2 - left;
+  }
+  function logoStartY() {
+    var top = parseFloat(getComputedStyle(heroLogo).top) || 0;
+    return window.innerHeight * 0.42 - (heroLogo.offsetHeight * LOGO_BIG) / 2 - top;
+  }
+
   var heroTl = gsap.timeline({
     scrollTrigger: {
       trigger: ".hero",
@@ -98,24 +117,29 @@
       end: "+=360%",
       pin: ".hero-stage",
       scrub: true,
+      invalidateOnRefresh: true, // recompute the logo's centred start on resize
       onUpdate: function (self) {
         var light = self.progress > 0.62;
         stage.classList.toggle("is-light", light);
         nav.classList.toggle("on-dark", !light);
-        // the big hero logo owns the corner until it shrinks to nav size,
-        // then the real nav logo takes over (seamless — same mark)
-        if (navLogoImg) navLogoImg.style.opacity = self.progress < 0.4 ? "0" : "1";
+        // white mark on the dark stage, dark mark once the stage turns light —
+        // the logo itself never fades, it only recolours
+        if (heroLogo) heroLogo.style.filter = light ? "none" : "invert(1)";
+        // reveal the nav buttons + bar only once the logo has settled (~0.5);
+        // this toggles back on the way up too, so the reverse motion matches
+        nav.classList.toggle("pre-logo", self.progress < 0.5);
       },
-      onLeave: function () { nav.classList.remove("on-dark"); if (navLogoImg) navLogoImg.style.opacity = "1"; },
+      onLeave: function () { nav.classList.remove("on-dark", "pre-logo"); },
       onEnterBack: function () { nav.classList.add("on-dark"); }
     }
   });
   heroTl
-    // the big brand logo shrinks from ~half-screen back into the nav corner
+    // ONE continuous glide: big & centred on landing → shrinks and travels to
+    // the nav corner (x:0, y:0, scale:1 = its CSS resting spot). No opacity, no
+    // hand-off — so scrolling back up reverses the exact same motion smoothly.
     .fromTo("#hero-logo",
-      { scale: 4.2 },
-      { scale: 1, ease: "power1.inOut", duration: 0.42 }, 0)
-    .to("#hero-logo", { opacity: 0, ease: "none", duration: 0.06 }, 0.42)
+      { scale: LOGO_BIG, x: logoStartX, y: logoStartY },
+      { scale: 1, x: 0, y: 0, ease: "power1.inOut", duration: 0.5 }, 0)
     // Cristina rises: only her head shows at first, then her whole body moves up
     .fromTo("#hero-cutout",
       { y: "62vh", filter: "brightness(0.9) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },

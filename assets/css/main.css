@@ -141,6 +141,17 @@ p a { border-bottom: 1px solid var(--line); }
 .nav.on-dark:not(.is-open) .nav-links a.nav-cta:hover { border-color: var(--sage); background: rgba(168, 203, 160, 0.12); }
 .nav.on-dark.is-scrolled { background: rgba(30, 39, 32, 0.72); border-bottom-color: var(--line-light); }
 
+/* nav chrome fades in only once the big logo has settled into the corner.
+   While .pre-logo is set (logo still travelling), links are hidden and the bar
+   stays transparent so nothing appears prematurely or covers the logo. */
+.nav-links { transition: color 0.25s, opacity 0.5s ease; }
+.nav.pre-logo .nav-links { opacity: 0; pointer-events: none; }
+.nav.pre-logo, .nav.pre-logo.is-scrolled {
+  background: transparent;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+
 /* ---------- buttons ---------- */
 .btn {
   display: inline-block;
@@ -238,13 +249,16 @@ p a { border-bottom: 1px solid var(--line); }
   50%      { opacity: 0.75; }
 }
 
-/* big brand logo on landing — anchored top-left, JS scales it up on landing
-   and shrinks it back into the nav corner on scroll */
+/* Big brand logo (home only). Its CSS position is its FINAL resting spot —
+   the nav corner at nav-logo size. JS offsets + scales it up to centre-screen
+   on landing, then the scrub timeline glides it continuously back to here.
+   Sits ABOVE the nav bar (z above .nav) so it is never covered; it never fades
+   out, so scrolling back up simply reverses the same continuous motion. */
 .hero-logo {
-  position: absolute;
-  top: 12px; left: var(--gutter);
-  z-index: 5;
-  width: 185px; height: auto;      /* nav-logo size at scale 1 */
+  position: fixed;
+  top: 10px; left: var(--gutter);
+  z-index: 55;                     /* above .nav (z 50) — never hidden by the bar */
+  width: 185px; height: auto;      /* nav-logo size at scale 1 (rest state) */
   transform-origin: top left;
   filter: invert(1);               /* white mark on the dark stage */
   pointer-events: none;
