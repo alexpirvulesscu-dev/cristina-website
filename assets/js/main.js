@@ -174,15 +174,48 @@
       var idx = Math.min(steps.length - 1, Math.floor(self.progress * steps.length));
       steps.forEach(function (s, i) { s.classList.toggle("is-active", i === idx); });
     },
-    // restart from the beginning each time the section is reached (both when
-    // scrolling down into it and back up into it); keep playing while scrolling
-    onEnter: function () { if (analysisVideo) { analysisVideo.currentTime = 0; analysisVideo.play().catch(function () {}); } },
-    onEnterBack: function () { if (analysisVideo) { analysisVideo.currentTime = 0; analysisVideo.play().catch(function () {}); } }
+    // playback is owned by the scan-reveal timeline below, so the video is not
+    // restarted here — doing so mid-reveal caused a visible jump. Coming back
+    // up into the pinned section, just make sure it is still running.
+    onEnterBack: function () { if (analysisVideo && analysisVideo.paused) analysisVideo.play().catch(function () {}); }
   });
-  gsap.from(".method-media", {
-    scrollTrigger: { trigger: ".method", start: "top 70%", end: "top 20%", scrub: true },
-    y: 60, opacity: 0.4, ease: "none"
-  });
+  /* the video resolves out of a blank plate behind a sweeping scan line.
+     Replaces the old scrubbed fade, which jumped as the section pinned. */
+  var scan = document.getElementById("method-scan");
+  if (scan) {
+    scan.style.display = "block";   // arm the reveal (CSS keeps it off by default)
+    var scanline = scan.querySelector(".method-scanline");
+    var revealTl = gsap.timeline({
+      paused: true,
+      onStart: function () {
+        if (analysisVideo) { analysisVideo.currentTime = 0; analysisVideo.play().catch(function () {}); }
+      }
+    });
+    revealTl
+      // the line appears at the top of the blank frame
+      .set(scan, { clipPath: "inset(0% 0% 0% 0%)" })
+      .set(scanline, { top: "0%", opacity: 0 })
+      .to(scanline, { opacity: 1, duration: 0.22, ease: "power2.out" })
+      // it sweeps down, and the plate wipes away behind it so her face resolves
+      .to(scanline, { top: "100%", duration: 1.25, ease: "power2.inOut" }, 0.12)
+      .to(scan, {
+        clipPath: "inset(100% 0% 0% 0%)",
+        duration: 1.25, ease: "power2.inOut"
+      }, 0.12)
+      .to(scanline, { opacity: 0, duration: 0.3, ease: "power2.in" }, 1.1);
+    window.__methodReveal = revealTl; // debug/testing handle
+
+    ScrollTrigger.create({
+      trigger: ".method",
+      start: "top 62%",
+      onEnter: function () { revealTl.play(); },
+      // coming back up, reset so the reveal reads again
+      onLeaveBack: function () {
+        revealTl.pause(0);
+        gsap.set(scan, { clipPath: "inset(0% 0% 0% 0%)" });
+      }
+    });
+  }
 
   /* ---------- story: line-by-line reveal + route draw ---------- */
   // the story now fits one screen, so the lines reveal together as a stagger
@@ -192,10 +225,21 @@
     scrollTrigger: { trigger: ".story", start: "top 65%" },
     y: 30, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.12
   });
-  gsap.from(".story-route i", {
-    scrollTrigger: { trigger: ".story-route", start: "top 85%" },
-    scaleX: 0, duration: 1.2, ease: "power2.out", stagger: 0.25
+  /* the route draws itself: each city drops in, then the line runs on to the
+     next one, so the journey reads as a journey rather than three words */
+  var routeTl = gsap.timeline({
+    scrollTrigger: { trigger: ".story-route", start: "top 82%" }
   });
+  var cities = gsap.utils.toArray(".story-route span");
+  var legs = gsap.utils.toArray(".story-route i");
+  cities.forEach(function (city, i) {
+    routeTl.from(city, { opacity: 0, y: 14, duration: 0.45, ease: "power2.out" }, i === 0 ? 0 : ">-0.1");
+    if (legs[i]) routeTl.from(legs[i], { scaleX: 0, duration: 0.5, ease: "power1.inOut" }, ">-0.15");
+  });
+  // the destination marker pulses once it is reached
+  routeTl.fromTo(cities[cities.length - 1],
+    { scale: 1 },
+    { scale: 1.06, duration: 0.28, yoyo: true, repeat: 1, ease: "power2.inOut", transformOrigin: "left center" });
   gsap.from(".story-photo", {
     scrollTrigger: { trigger: ".story-photo", start: "top 85%" },
     y: 60, opacity: 0, duration: 1.1, ease: "power2.out"

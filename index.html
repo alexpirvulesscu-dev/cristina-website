@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://cpdentalaesthetics.com/">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="assets/css/main.css?v=12">
+<link rel="stylesheet" href="assets/css/main.css?v=16">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -90,6 +90,11 @@
     <div class="method-pin">
       <div class="method-media">
         <video id="analysis-video" src="assets/video/analysis.mp4?v=final" poster="assets/img/analysis-poster.jpg?v=final" muted playsinline loop preload="metadata"></video>
+        <!-- techy reveal: the frame sits blank, then a scan line sweeps down
+             and her face resolves behind it -->
+        <div class="method-scan" id="method-scan" aria-hidden="true">
+          <i class="method-scanline"></i>
+        </div>
         <div class="method-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
         <p class="method-media-label mono" aria-hidden="true">Facial analysis — illustrative visualisation, not a patient</p>
       </div>
@@ -113,6 +118,10 @@
             <p>Each tooth is its own decision: keep, whiten, reshape, restore. The most conservative option that achieves the result always wins.</p>
           </li>
         </ol>
+        <div class="section-cta section-cta-left">
+          <a class="btn btn-lg" href="#consultation">Book a consultation</a>
+          <span class="cta-note">Private, unhurried, and you leave with a written plan.</span>
+        </div>
       </div>
     </div>
   </section>
@@ -130,6 +139,9 @@
           <p class="story-line">Glasgow taught me the discipline: the standards, the documentation, the habit of never touching a healthy tooth without a reason. London taught me the craft — years spent planning smiles for people whose faces are photographed for a living.</p>
           <p class="story-line serif-pull">“I came home to Bucharest because the work I love doing best is quiet, careful — and it belongs here too.”</p>
           <p class="story-line">What I brought back is a way of working: UK-standard consent and planning, conservative by default, honest about what is and isn’t worth doing to your teeth.</p>
+          <div class="section-cta section-cta-left">
+            <a class="btn btn-lg" href="#consultation">Book a consultation</a>
+          </div>
         </div>
         <figure class="story-photo">
           <img src="assets/img/cristina-story.png" alt="Dr. Cristina Pirvulescu, cosmetic dentist">
@@ -204,6 +216,33 @@
             <p>Dentistry learned and practised in Britain — Glasgow for the discipline, London for the cosmetic craft, both brought home to Bucharest.</p>
           </article>
         </div>
+        <div class="section-cta section-cta-dark">
+          <a class="btn btn-lg" href="#consultation">Book a consultation</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHERE TO FIND HER ============ -->
+  <!-- Bucharest address is a PLACEHOLDER until her arrangement is confirmed. -->
+  <section class="locations" id="locations">
+    <div class="locations-inner">
+      <p class="eyebrow">Where to find her</p>
+      <h2 class="section-title">Two cities,<br><em>one</em> standard.</h2>
+      <div class="loc-grid">
+        <article class="loc">
+          <span class="mono loc-city">Bucharest</span>
+          <h3 class="loc-name">Practice address<br>to be confirmed</h3>
+          <p>Her Bucharest practice is being finalised. The address will be published here as soon as it is confirmed — until then, reach her by email or WhatsApp and she will arrange your consultation.</p>
+        </article>
+        <article class="loc">
+          <span class="mono loc-city">London</span>
+          <h3 class="loc-name">Smile Solutions</h3>
+          <p>Cristina continues to treat patients in London, travelling regularly to see cases at Smile Solutions. If London is easier for you, say so when you get in touch.</p>
+        </article>
+      </div>
+      <div class="section-cta">
+        <a class="btn btn-lg" href="#consultation">Book a consultation</a>
       </div>
     </div>
   </section>
@@ -239,25 +278,6 @@
         <p class="form-note">Your message opens in your own email app — nothing is stored on this site.</p>
       </form>
     </div>
-
-    <!-- Where she practises — two cities. Bucharest address is a PLACEHOLDER
-         until her practice arrangement is confirmed. -->
-    <div class="locations">
-      <p class="eyebrow">Where to find her</p>
-      <h2 class="section-title">Two cities,<br><em>one</em> standard.</h2>
-      <div class="loc-grid">
-        <article class="loc">
-          <span class="mono loc-city">Bucharest</span>
-          <h3 class="loc-name">Practice address<br>to be confirmed</h3>
-          <p>Her Bucharest practice is being finalised. The address will be published here as soon as it is confirmed — until then, reach her by email or WhatsApp and she will arrange your consultation.</p>
-        </article>
-        <article class="loc">
-          <span class="mono loc-city">London</span>
-          <h3 class="loc-name">Smile Solutions</h3>
-          <p>Cristina continues to treat patients in London, travelling regularly to see cases at Smile Solutions. If London is easier for you, say so when you get in touch.</p>
-        </article>
-      </div>
-    </div>
   </section>
 
 </main>
@@ -272,6 +292,6 @@
 <script src="assets/js/vendor/gsap.min.js"></script>
 <script src="assets/js/vendor/ScrollTrigger.min.js"></script>
 <script src="assets/js/vendor/lenis.min.js"></script>
-<script src="assets/js/main.js?v=12"></script>
+<script src="assets/js/main.js?v=16"></script>
 </body>
 </html>

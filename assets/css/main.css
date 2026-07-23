@@ -348,6 +348,30 @@ p a { border-bottom: 1px solid var(--line); }
   padding: 90px var(--gutter);
 }
 .method-media { position: relative; }
+/* the blank plate the video resolves out of, plus the sage scan line that
+   sweeps down it. Both are driven by GSAP when the section is reached. */
+.method-scan {
+  display: none;               /* only armed by JS — with JS off or reduced
+                                  motion the video is never covered */
+  position: absolute; inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* explicit start value — GSAP cannot animate clip-path out of `none` */
+  clip-path: inset(0% 0% 0% 0%);
+}
+.method-scan::before {          /* the blank plate itself */
+  content: "";
+  position: absolute; inset: 0;
+  background: #101710;
+  opacity: 1;
+}
+.method-scanline {
+  position: absolute; left: 0; right: 0; top: 0;
+  height: 2px;
+  background: var(--sage);
+  box-shadow: 0 0 18px 4px rgba(168, 203, 160, 0.55);
+  opacity: 0;
+}
 .method-media video {
   width: 100%;
   aspect-ratio: 4 / 5;
@@ -404,7 +428,8 @@ p a { border-bottom: 1px solid var(--line); }
 .story-eyebrow-wrap, .story-route { max-width: 1180px; }
 .story-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);  /* text | her photo, half each */
+  /* the copy is body-sized now, so give her the larger share of the width */
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: clamp(32px, 5vw, 72px);
   align-items: center;
 }
@@ -417,28 +442,55 @@ p a { border-bottom: 1px solid var(--line); }
 .story-photo {
   margin: 0;
   display: flex;
-  justify-content: flex-end;      /* she stays hard against the screen edge */
+  justify-content: center;        /* centred within her half, not jammed right */
   align-items: flex-end;
+  padding-right: clamp(12px, 1.8vw, 36px);   /* inset from the edge, centred in her half */
 }
 .story-photo img {
-  /* fills her half of the screen, but height-capped so the section always
-     fits one screen — contain keeps her undistorted on short viewports */
+  /* as large as her column allows while the section still fits one screen */
   width: 100%;
   height: auto;
-  max-height: 70vh;
-  object-fit: contain; object-position: bottom right;
+  max-height: 64vh;
+  max-width: none;
+  object-fit: contain; object-position: bottom center;
   /* background-removed cutout: shadow follows her outline, not a box */
   filter: drop-shadow(0 22px 44px rgba(44, 48, 54, 0.22));
+  /* her body is cropped at the bottom — fade it out instead of cutting hard */
+  -webkit-mask-image: linear-gradient(to bottom, #000 68%, rgba(0,0,0,0.55) 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 68%, rgba(0,0,0,0.55) 88%, transparent 100%);
 }
+/* the journey, read as a drawn route: each city arrives with its own dot,
+   and the connecting line draws itself between them */
 .story-route {
-  display: flex; align-items: center; gap: 14px;
-  margin: 6px 0 30px;
-  color: var(--muted);
-  font-size: 14px;                /* slightly bigger than the standard mono */
-  letter-spacing: 0.1em;
+  display: flex; align-items: center; gap: clamp(14px, 2vw, 26px);
+  margin: 10px 0 38px;
+  max-width: 760px;
+  color: var(--ink);
+  font-size: clamp(16px, 1.6vw, 20px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
-.story-route i { flex: 1; height: 1px; background: rgba(75, 78, 84, 0.28); transform-origin: left; }
-.story-route span:last-child { color: var(--olive); }
+.story-route span {
+  position: relative;
+  padding-left: 20px;
+  white-space: nowrap;
+}
+.story-route span::before {      /* the stop marker */
+  content: "";
+  position: absolute; left: 0; top: 50%;
+  width: 9px; height: 9px; margin-top: -4.5px;
+  border-radius: 50%;
+  border: 1.5px solid var(--olive);
+  background: var(--bg);
+}
+.story-route i {
+  flex: 1; height: 1px;
+  background: linear-gradient(to right, var(--olive), rgba(107, 142, 35, 0.35));
+  transform-origin: left;
+}
+/* the destination reads as arrived: filled marker, accent text */
+.story-route span:last-child { color: var(--olive-deep); }
+.story-route span:last-child::before { background: var(--olive); box-shadow: 0 0 0 4px rgba(107, 142, 35, 0.16); }
 /* body-sized, matching the rest of the site — the section reads in one screen */
 .story-text .story-line { margin-bottom: 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
 .story-text .story-line:first-child { color: var(--ink); }
@@ -663,26 +715,54 @@ p a { border-bottom: 1px solid var(--line); }
 /* WhatsApp — the second route to her, alongside the form. Outlined so it
    reads as an alternative to the solid accent CTA, with the mark in its own
    green so people recognise it instantly. */
+/* solid WhatsApp green so it is impossible to miss — it is one of only two
+   ways to reach her, and must carry the same weight as the form's CTA */
 .btn-whatsapp {
-  display: inline-flex; align-items: center; gap: 11px;
-  margin-top: 26px;
-  font-size: 14px; font-weight: 500;
-  color: var(--heading);
-  background: var(--panel);
-  border: 1px solid rgba(75, 78, 84, 0.28);
+  display: inline-flex; align-items: center; gap: 12px;
+  margin-top: 28px;
+  font-size: 16px; font-weight: 600;
+  color: #ffffff;
+  background: #25d366;
+  border: 1px solid #25d366;
   border-radius: 999px;
-  padding: 12px 24px 12px 20px;
-  transition: border-color 0.25s, background 0.25s, transform 0.25s;
+  padding: 16px 32px 16px 26px;
+  box-shadow: 0 10px 26px rgba(37, 211, 102, 0.34);
+  transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
 }
-.btn-whatsapp svg { width: 20px; height: 20px; color: #25d366; flex: none; }
-.btn-whatsapp:hover { border-color: #25d366; background: rgba(37, 211, 102, 0.07); transform: translateY(-2px); }
+.btn-whatsapp svg { width: 24px; height: 24px; color: #ffffff; flex: none; }
+.btn-whatsapp:hover {
+  background: #1eb955; border-color: #1eb955;
+  box-shadow: 0 14px 32px rgba(37, 211, 102, 0.45);
+  transform: translateY(-2px);
+}
+
+/* ---------- the consultation CTA, repeated through every section ---------- */
+.btn-lg {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 17px 38px;
+  box-shadow: 0 10px 26px rgba(107, 142, 35, 0.30);
+}
+.btn-lg:hover { box-shadow: 0 14px 32px rgba(107, 142, 35, 0.40); transform: translateY(-2px); }
+.section-cta {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 18px 24px;
+  margin-top: clamp(38px, 6vh, 64px);
+}
+.section-cta-left { justify-content: flex-start; }
+.cta-note { color: var(--muted); font-size: 14.5px; }
+.section-cta-dark .btn {
+  background: var(--sage); border-color: var(--sage); color: var(--hero-dark);
+  box-shadow: 0 10px 26px rgba(168, 203, 160, 0.22);
+}
+.section-cta-dark .btn:hover { background: #bcd9b4; border-color: #bcd9b4; color: var(--hero-dark); }
 
 /* ---------- where to find her ---------- */
-.locations {
+/* its own section, sitting between the credentials band and the contact form */
+.locations { background: var(--bg); padding: clamp(80px, 12vh, 140px) var(--gutter); }
+.locations-inner {
   max-width: 1150px;
-  margin: clamp(72px, 11vh, 130px) auto 0;
-  padding-top: clamp(56px, 8vh, 90px);
-  border-top: 1px solid var(--line);
+  margin: 0 auto;
   text-align: center;
 }
 .locations .section-title { margin-bottom: clamp(34px, 5vh, 56px); }
