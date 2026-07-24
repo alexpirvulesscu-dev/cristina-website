@@ -945,6 +945,18 @@ p a { border-bottom: 1px solid var(--line); }
      nav; the big landing scale is computed from this width in JS, so it fits */
   .hero-logo { width: 132px; top: 14px; }
 
+  /* the tagline: larger and in a clean off-white (was a sage green that blended
+     into her scrubs), with a stronger shadow so it stands out over the photo */
+  .hero-h2 {
+    line-height: 1.03;
+    /* a dark halo so the white reads over her light scrubs AND the dark stage */
+    text-shadow:
+      0 1px 3px rgba(8,12,8,0.9),
+      0 3px 12px rgba(8,12,8,0.85),
+      0 0 34px rgba(8,12,8,0.7);
+  }
+  .hero-h2 em { color: #ffffff; }
+
   /* the four green corners must hug the VIDEO, not the whole media box (which
      also holds the caption below). Give the corner frame the video's exact box
      — same width, 4:5 aspect — so the bottom pair lands on the video's edge. */
@@ -1009,7 +1021,7 @@ p a { border-bottom: 1px solid var(--line); }
 /* ---------- small phones: keep the big hero type inside the screen ---------- */
 @media (max-width: 560px) {
   .hero-h1 { font-size: clamp(38px, 11.5vw, 60px); }
-  .hero-h2 { font-size: clamp(30px, 8.5vw, 46px); top: 54vh; }
+  .hero-h2 { font-size: clamp(40px, 13vw, 62px); top: 52vh; }
   .hero-sub { font-size: 15px; }
   .section-title { font-size: clamp(32px, 8.5vw, 46px); }
   .credit-title, .loc-name { font-size: clamp(23px, 6.5vw, 30px); }
