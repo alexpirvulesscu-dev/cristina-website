@@ -97,6 +97,14 @@
   if (navLogoImg) navLogoImg.style.opacity = "0";
   nav.classList.add("pre-logo");
 
+  // true on phones — the hero photo starts higher there
+  function mob() { return window.matchMedia("(max-width: 760px)").matches; }
+
+  // Centre the cutout via GSAP so the later x-glide composes with it instead
+  // of discarding the CSS translateX(-50%) (which lost the centring, shifting
+  // her to the right).
+  gsap.set("#hero-cutout", { xPercent: -50 });
+
   // landing scale — the big logo should span ~86% of the screen width but
   // never balloon past ~760px on a desktop. Computed from the viewport so it
   // fits phones (where 4.2× would overflow) as well as wide screens.
@@ -148,8 +156,9 @@
       { scale: 1, x: 0, y: 0, ease: "power1.inOut", duration: 0.5 }, 0)
     // Cristina rises: only her head shows at first, then her whole body moves up
     .fromTo("#hero-cutout",
-      { y: "32vh", filter: "brightness(0.9) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
-      { y: "0vh", filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.52 }, 0)
+      { xPercent: -50, y: function () { return mob() ? "16vh" : "32vh"; },
+        filter: "brightness(0.9) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
+      { xPercent: -50, y: "0vh", filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.52 }, 0)
     .to(".scroll-hint", { opacity: 0, ease: "none", duration: 0.12 }, 0.1)
     // "It simply looks like you." revealed only once she is up (hidden until now)
     .fromTo("#hero-line2",

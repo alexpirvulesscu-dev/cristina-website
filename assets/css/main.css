@@ -269,7 +269,8 @@ p a { border-bottom: 1px solid var(--line); }
 .hero-cutout {
   position: absolute;
   bottom: 0; left: 50%;
-  transform: translateX(-50%);
+  /* centring is GSAP-managed (xPercent:-50) so the scroll x-glide composes
+     with it instead of discarding a CSS translateX(-50%) on refresh */
   z-index: 2;
   height: 90vh; width: auto; max-width: none;
   filter: drop-shadow(0 30px 60px rgba(10, 16, 11, 0.4));
