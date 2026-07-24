@@ -180,27 +180,39 @@
     .to({}, { duration: 0.08 }); // held beat before the hero releases
   }
 
-  /* ---------- method: pinned analysis with stepped reveals ---------- */
+  /* ---------- method: stepped reveals ---------- */
   var steps = gsap.utils.toArray(".method-step");
   var analysisVideo = document.getElementById("analysis-video");
-  ScrollTrigger.create({
-    trigger: ".method",
-    start: "top top",
-    /* shorter pin so the steps advance quickly — even shorter on phones, where
-       a long pinned section reads as "nothing is happening" */
-    end: function () { return mob() ? "+=40%" : "+=70%"; },
-    pin: ".method-pin",
-    scrub: true,
-    invalidateOnRefresh: true,
-    onUpdate: function (self) {
-      var idx = Math.min(steps.length - 1, Math.floor(self.progress * steps.length));
-      steps.forEach(function (s, i) { s.classList.toggle("is-active", i === idx); });
-    },
-    // playback is owned by the scan-reveal timeline below, so the video is not
-    // restarted here — doing so mid-reveal caused a visible jump. Coming back
-    // up into the pinned section, just make sure it is still running.
-    onEnterBack: function () { if (analysisVideo && analysisVideo.paused) analysisVideo.play().catch(function () {}); }
-  });
+  function setActiveStep(p) {
+    var idx = Math.min(steps.length - 1, Math.floor(p * steps.length));
+    steps.forEach(function (s, i) { s.classList.toggle("is-active", i === idx); });
+  }
+  if (mob()) {
+    /* PHONES: no pin. The pinned content is far taller than the screen, so the
+       highlight used to advance off-screen while the section sat frozen. Instead
+       let the section scroll naturally and light each line (Scan → Measure →
+       Plan) as it passes through the middle of the viewport. */
+    ScrollTrigger.create({
+      trigger: ".method-steps",
+      start: "top 72%",     // first line lights up as it reaches mid-screen
+      end: "bottom 55%",    // last line is lit by the time it leaves
+      onUpdate: function (self) { setActiveStep(self.progress); },
+      onLeaveBack: function () { steps.forEach(function (s) { s.classList.remove("is-active"); }); }
+    });
+  } else {
+    /* DESKTOP: video + steps sit side by side, so pin the pair and scrub the
+       highlight — everything stays visible while pinned. */
+    ScrollTrigger.create({
+      trigger: ".method",
+      start: "top top",
+      end: "+=70%",
+      pin: ".method-pin",
+      scrub: true,
+      invalidateOnRefresh: true,
+      onUpdate: function (self) { setActiveStep(self.progress); },
+      onEnterBack: function () { if (analysisVideo && analysisVideo.paused) analysisVideo.play().catch(function () {}); }
+    });
+  }
   /* The video simply eases in — a plain fade with a whisper of scale, played
      once and finished well before the section pins. Deliberately NOT scrubbed
      and with no vertical movement: the old scrubbed y-tween fought the pin as
