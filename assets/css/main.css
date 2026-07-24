@@ -906,6 +906,13 @@ p a { border-bottom: 1px solid var(--line); }
      nav; the big landing scale is computed from this width in JS, so it fits */
   .hero-logo { width: 132px; top: 14px; }
 
+  /* soften the hard bottom edge of her photo (where her arms are cropped) so
+     she fades into the stage instead of cutting off abruptly */
+  .hero-cutout {
+    -webkit-mask-image: linear-gradient(to bottom, #000 74%, rgba(0,0,0,0.35) 90%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 74%, rgba(0,0,0,0.35) 90%, transparent 100%);
+  }
+
   /* the intro sits LOW over her body (she rises so her head is near the top)
      on a frosted glass panel, so the copy reads against the photo and clears
      her face. Its buttons are made clearly visible on the dark panel. */
