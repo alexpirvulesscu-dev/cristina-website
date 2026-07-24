@@ -913,8 +913,10 @@ p a { border-bottom: 1px solid var(--line); }
 @media (max-width: 760px) {
   .wa-fab {
     display: flex; align-items: center; justify-content: center;
-    position: fixed; left: 16px; bottom: 16px;
-    z-index: 47;
+    position: fixed; right: 16px; bottom: 16px;
+    /* above the nav/menu layer (z 50) so the round button stays visible while
+       the full-screen menu is open */
+    z-index: 56;
     width: 58px; height: 58px;
     border-radius: 50%;
     background: #25d366; color: #fff;
