@@ -906,6 +906,28 @@ p a { border-bottom: 1px solid var(--line); }
      nav; the big landing scale is computed from this width in JS, so it fits */
   .hero-logo { width: 132px; top: 14px; }
 
+  /* the intro sits LOW over her body (she rises so her head is near the top)
+     on a frosted glass panel, so the copy reads against the photo and clears
+     her face. Its buttons are made clearly visible on the dark panel. */
+  .hero-intro {
+    top: auto; bottom: 13vh; transform: none;
+    left: var(--gutter); right: var(--gutter);
+    max-width: none;
+    background: rgba(18, 24, 18, 0.5);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border: 1px solid rgba(240, 244, 248, 0.16);
+    border-radius: 16px;
+    padding: 20px 18px;
+  }
+  .hero-intro .hero-sub { color: rgba(240, 244, 248, 0.94); margin-bottom: 20px; }
+  .hero-stage .hero-actions .btn-ghost {
+    color: #f4f7f2; border: 1px solid rgba(240, 244, 248, 0.55);
+    border-radius: 999px; padding: 13px 22px;
+  }
+  /* keep the panel's light text readable even after the stage turns light */
+  .hero-stage.is-light .hero-intro .hero-sub { color: rgba(240, 244, 248, 0.94); }
+  .hero-stage.is-light .hero-actions .btn-ghost { color: #f4f7f2; border-color: rgba(240, 244, 248, 0.55); }
+
   /* trim the tall desktop section paddings so the page isn't endless to scroll */
   .trust-inner { padding: clamp(56px, 9vh, 90px) var(--gutter) clamp(48px, 7vh, 70px); }
   .credbar-inner { padding: clamp(52px, 9vh, 88px) var(--gutter); }

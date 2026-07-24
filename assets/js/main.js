@@ -131,7 +131,8 @@
     scrollTrigger: {
       trigger: ".hero",
       start: "top top",
-      end: "+=360%",
+      // phones scroll through the hero 30% faster (shorter pin distance)
+      end: function () { return mob() ? "+=252%" : "+=360%"; },
       pin: ".hero-stage",
       scrub: true,
       invalidateOnRefresh: true, // recompute the logo's centred start on resize
@@ -161,7 +162,7 @@
     .fromTo("#hero-cutout",
       { xPercent: heroCutX, y: function () { return mob() ? "16vh" : "32vh"; },
         filter: "brightness(0.9) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
-      { xPercent: heroCutX, y: "0vh", filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.52 }, 0)
+      { xPercent: heroCutX, y: function () { return mob() ? "-18vh" : "0vh"; }, filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.52 }, 0)
     .to(".scroll-hint", { opacity: 0, ease: "none", duration: 0.12 }, 0.1)
     // "It simply looks like you." revealed only once she is up (hidden until now)
     .fromTo("#hero-line2",
@@ -172,7 +173,7 @@
     .to("#hero-cutout", { filter: "brightness(1.03) drop-shadow(0 30px 60px rgba(44,54,44,0.18))", ease: "none", duration: 0.14 }, 0.64)
     // line 2 gives way; she glides right; the intro copy + CTAs come in on the left
     .to("#hero-line2", { opacity: 0, y: -30, ease: "none", duration: 0.08 }, 0.8)
-    .to("#hero-cutout", { x: "24vw", ease: "none", duration: 0.16 }, 0.82)
+    .to("#hero-cutout", { x: function () { return mob() ? "0vw" : "24vw"; }, ease: "none", duration: 0.16 }, 0.82)
     .fromTo("#hero-intro",
       { opacity: 0, x: -40 },
       { opacity: 1, x: 0, ease: "none", duration: 0.14 }, 0.86)
