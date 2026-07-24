@@ -61,6 +61,9 @@
   if (!window.gsap || !window.ScrollTrigger) return;
   gsap.registerPlugin(ScrollTrigger);
 
+  // true on phones — several sections choreograph differently there
+  function mob() { return window.matchMedia("(max-width: 760px)").matches; }
+
   /* ---------- load-in: she and the first line are present immediately ----- */
   if (!reduced) {
     gsap.from(".hero-cutout", { opacity: 0, duration: 1.4, ease: "power2.out", delay: 0.1 });
@@ -96,9 +99,6 @@
   var navLogoImg = document.querySelector(".nav-logo img");
   if (navLogoImg) navLogoImg.style.opacity = "0";
   nav.classList.add("pre-logo");
-
-  // true on phones — the hero photo starts higher there
-  function mob() { return window.matchMedia("(max-width: 760px)").matches; }
 
   // Centre the cutout via GSAP so the later x-glide composes with it instead
   // of discarding the CSS translateX(-50%). She is a background-removed cutout
@@ -186,10 +186,12 @@
   ScrollTrigger.create({
     trigger: ".method",
     start: "top top",
-    end: "+=70%",              /* halved — the steps were advancing so slowly
-                                  it read as nothing happening while scrolling */
+    /* shorter pin so the steps advance quickly — even shorter on phones, where
+       a long pinned section reads as "nothing is happening" */
+    end: function () { return mob() ? "+=40%" : "+=70%"; },
     pin: ".method-pin",
     scrub: true,
+    invalidateOnRefresh: true,
     onUpdate: function (self) {
       var idx = Math.min(steps.length - 1, Math.floor(self.progress * steps.length));
       steps.forEach(function (s, i) { s.classList.toggle("is-active", i === idx); });
