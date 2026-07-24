@@ -97,17 +97,23 @@
   if (navLogoImg) navLogoImg.style.opacity = "0";
   nav.classList.add("pre-logo");
 
-  var LOGO_BIG = 4.2; // landing scale — roughly half the screen
+  // landing scale — the big logo should span ~86% of the screen width but
+  // never balloon past ~760px on a desktop. Computed from the viewport so it
+  // fits phones (where 4.2× would overflow) as well as wide screens.
+  function bigScale() {
+    var target = Math.min(760, window.innerWidth * 0.86);
+    return target / heroLogo.offsetWidth;
+  }
 
   // Offsets that place the (top-left-anchored) logo, scaled up, centred on
   // screen. Function-based so GSAP recomputes them on every refresh/resize.
   function logoStartX() {
     var left = parseFloat(getComputedStyle(heroLogo).left) || 0;
-    return window.innerWidth / 2 - (heroLogo.offsetWidth * LOGO_BIG) / 2 - left;
+    return window.innerWidth / 2 - (heroLogo.offsetWidth * bigScale()) / 2 - left;
   }
   function logoStartY() {
     var top = parseFloat(getComputedStyle(heroLogo).top) || 0;
-    return window.innerHeight * 0.27 - (heroLogo.offsetHeight * LOGO_BIG) / 2 - top;
+    return window.innerHeight * 0.27 - (heroLogo.offsetHeight * bigScale()) / 2 - top;
   }
 
   var heroTl = gsap.timeline({
@@ -138,7 +144,7 @@
     // the nav corner (x:0, y:0, scale:1 = its CSS resting spot). No opacity, no
     // hand-off — so scrolling back up reverses the exact same motion smoothly.
     .fromTo("#hero-logo",
-      { scale: LOGO_BIG, x: logoStartX, y: logoStartY },
+      { scale: bigScale, x: logoStartX, y: logoStartY },
       { scale: 1, x: 0, y: 0, ease: "power1.inOut", duration: 0.5 }, 0)
     // Cristina rises: only her head shows at first, then her whole body moves up
     .fromTo("#hero-cutout",

@@ -878,7 +878,13 @@ p a { border-bottom: 1px solid var(--line); }
     transition: opacity 0.32s ease, transform 0.32s ease, visibility 0.32s;
     z-index: 45;
   }
-  .nav.is-open .nav-links { opacity: 1; visibility: visible; transform: none; }
+  /* the open menu must win even while the hero's pre-logo state (which hides
+     the desktop links until the big logo settles) is active — otherwise the
+     full-screen menu opens invisible at the top of the page */
+  .nav.is-open .nav-links {
+    opacity: 1 !important; visibility: visible !important;
+    pointer-events: auto !important; transform: none;
+  }
   .nav.is-open .nav-links a { color: var(--muted) !important; }
   .nav.is-open .nav-links a[aria-current="page"] { color: var(--heading) !important; }
   .nav.is-open .nav-links a.nav-cta {
@@ -889,6 +895,35 @@ p a { border-bottom: 1px solid var(--line); }
   }
   /* the logo must read dark over the light menu, even during the hero dark phase */
   .nav.is-open .nav-logo img { filter: none !important; }
+  /* the big centred hero logo (home) would otherwise sit over the open menu */
+  .nav.is-open ~ .hero-logo { opacity: 0 !important; pointer-events: none; }
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 760px) {
+  /* the brand logo's resting size in the corner shrinks to match the phone
+     nav; the big landing scale is computed from this width in JS, so it fits */
+  .hero-logo { width: 132px; top: 14px; }
+
+  /* trim the tall desktop section paddings so the page isn't endless to scroll */
+  .trust-inner { padding: clamp(56px, 9vh, 90px) var(--gutter) clamp(48px, 7vh, 70px); }
+  .credbar-inner { padding: clamp(52px, 9vh, 88px) var(--gutter); }
+  .locations { padding: clamp(56px, 9vh, 90px) var(--gutter); }
+  .consult { padding: clamp(64px, 10vh, 110px) var(--gutter); }
+  .services { padding: clamp(96px, 14vh, 150px) var(--gutter) clamp(64px, 9vh, 100px); }
+
+  /* the story stacks: let it flow naturally instead of forcing one screen,
+     and give her photo real presence rather than a small centred thumbnail */
+  .story { min-height: 0; display: block; padding: clamp(56px, 9vh, 90px) var(--gutter); }
+  .story-photo { max-width: 460px; padding-right: 0; }
+  .story-photo img { max-height: none; }
+  .story-text { max-width: none; }
+
+  /* CTAs centre on their own line, comfortable to tap */
+  .section-cta, .section-cta-left { justify-content: center; text-align: center; }
+  .page-cta { flex-direction: column; gap: 18px; }
+  .btn, .btn-lg, .btn-whatsapp, .btn-ghost { width: 100%; text-align: center; justify-content: center; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
 }
 
 /* ---------- small phones: keep the big hero type inside the screen ---------- */
@@ -897,6 +932,9 @@ p a { border-bottom: 1px solid var(--line); }
   .hero-h2 { font-size: clamp(30px, 8.5vw, 46px); top: 54vh; }
   .hero-sub { font-size: 15px; }
   .section-title { font-size: clamp(32px, 8.5vw, 46px); }
+  .credit-title, .loc-name { font-size: clamp(23px, 6.5vw, 30px); }
+  .serif-pull { font-size: 21px; }
+  .form-lead { font-size: 18px; }
 }
 
 /* ---------- reduced motion: everything readable, nothing moves ---------- */
