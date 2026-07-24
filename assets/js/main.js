@@ -101,9 +101,12 @@
   function mob() { return window.matchMedia("(max-width: 760px)").matches; }
 
   // Centre the cutout via GSAP so the later x-glide composes with it instead
-  // of discarding the CSS translateX(-50%) (which lost the centring, shifting
-  // her to the right).
-  gsap.set("#hero-cutout", { xPercent: -50 });
+  // of discarding the CSS translateX(-50%). She is a background-removed cutout
+  // whose body sits ~4.5% left of the image centre, so on phones we nudge the
+  // image right by that much to centre HER, not the empty picture box. Desktop
+  // keeps the plain box-centre (-50) unchanged.
+  function heroCutX() { return mob() ? -45.5 : -50; }
+  gsap.set("#hero-cutout", { xPercent: heroCutX });
 
   // landing scale — the big logo should span ~86% of the screen width but
   // never balloon past ~760px on a desktop. Computed from the viewport so it
@@ -156,9 +159,9 @@
       { scale: 1, x: 0, y: 0, ease: "power1.inOut", duration: 0.5 }, 0)
     // Cristina rises: only her head shows at first, then her whole body moves up
     .fromTo("#hero-cutout",
-      { xPercent: -50, y: function () { return mob() ? "16vh" : "32vh"; },
+      { xPercent: heroCutX, y: function () { return mob() ? "16vh" : "32vh"; },
         filter: "brightness(0.9) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
-      { xPercent: -50, y: "0vh", filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.52 }, 0)
+      { xPercent: heroCutX, y: "0vh", filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.52 }, 0)
     .to(".scroll-hint", { opacity: 0, ease: "none", duration: 0.12 }, 0.1)
     // "It simply looks like you." revealed only once she is up (hidden until now)
     .fromTo("#hero-line2",
