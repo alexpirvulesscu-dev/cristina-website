@@ -906,6 +906,17 @@ p a { border-bottom: 1px solid var(--line); }
      nav; the big landing scale is computed from this width in JS, so it fits */
   .hero-logo { width: 132px; top: 14px; }
 
+  /* the four green corners must hug the VIDEO, not the whole media box (which
+     also holds the caption below). Give the corner frame the video's exact box
+     — same width, 4:5 aspect — so the bottom pair lands on the video's edge. */
+  .method-corners {
+    position: absolute; top: 0; left: 0; right: 0;
+    aspect-ratio: 4 / 5;
+    pointer-events: none;
+  }
+  .method-corners i:nth-child(3) { bottom: -1px; }
+  .method-corners i:nth-child(4) { bottom: -1px; }
+
   /* soften the hard bottom edge of her photo (where her arms are cropped) so
      she fades into the stage instead of cutting off abruptly */
   .hero-cutout {
