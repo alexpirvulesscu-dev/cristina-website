@@ -192,6 +192,16 @@ p a { border-bottom: 1px solid var(--line); }
   justify-content: center;
   background: var(--hero-dark);
 }
+/* The white the stage turns into. A full-size layer whose OPACITY the scroll
+   timeline fades in, instead of animating the stage's background-color
+   (opacity is cheap for the browser; repainting a full-screen colour is not). */
+.hero-wash {
+  position: absolute; inset: 0;
+  background: #f0f4f8;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+}
 .hero-eyebrow {
   position: absolute; top: 96px; left: 50%;
   transform: translateX(-50%);
