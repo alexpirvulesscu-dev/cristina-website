@@ -127,6 +127,13 @@
     return window.innerHeight * 0.27 - (heroLogo.offsetHeight * bigScale()) / 2 - top;
   }
 
+  // Timeline-time moments the page chrome switches on (see the heroTl below).
+  // LIGHT_AT: middle of the stage's fade to white (0.64 to 0.78), where a white
+  //   logo and a dark logo have about equal contrast against the grey stage.
+  // NAV_READY_AT: just after the logo has landed in the nav corner (0.5).
+  var LIGHT_AT = 0.71;
+  var NAV_READY_AT = 0.54;
+
   var heroTl = gsap.timeline({
     scrollTrigger: {
       trigger: ".hero",
@@ -137,7 +144,11 @@
       scrub: true,
       invalidateOnRefresh: true, // recompute the logo's centred start on resize
       onUpdate: function (self) {
-        var light = self.progress > 0.62;
+        // Read the TIMELINE's own clock, not scroll progress: the timeline runs
+        // 0 to 1.08 (the last 0.08 is the held beat), so progress and timeline
+        // time don't line up and switches keyed to progress fire early.
+        var t = self.animation.time();
+        var light = t > LIGHT_AT;
         stage.classList.toggle("is-light", light);
         nav.classList.toggle("on-dark", !light);
         // white mark on the dark stage, dark mark once the stage turns light —
@@ -145,7 +156,7 @@
         if (heroLogo) heroLogo.style.filter = light ? "none" : "invert(1)";
         // reveal the nav buttons + bar only once the logo has settled (~0.5);
         // this toggles back on the way up too, so the reverse motion matches
-        nav.classList.toggle("pre-logo", self.progress < 0.5);
+        nav.classList.toggle("pre-logo", t < NAV_READY_AT);
       },
       onLeave: function () { nav.classList.remove("on-dark", "pre-logo"); },
       onEnterBack: function () { nav.classList.add("on-dark"); }
@@ -169,7 +180,7 @@
       { opacity: 0, y: 30, filter: "blur(8px)" },
       { opacity: 1, y: 0, filter: "blur(0px)", ease: "none", duration: 0.16 }, 0.52)
     // the stage warms to light; she brightens
-    .to(".hero-stage", { backgroundColor: "#f0f4f8", ease: "none", duration: 0.14 }, 0.64)
+    .to(".hero-wash", { opacity: 1, ease: "none", duration: 0.14 }, 0.64)
     .to("#hero-cutout", { filter: "brightness(1.03) drop-shadow(0 30px 60px rgba(44,54,44,0.18))", ease: "none", duration: 0.14 }, 0.64)
     // line 2 gives way; she glides right; the intro copy + CTAs come in on the left
     .to("#hero-line2", { opacity: 0, y: -30, ease: "none", duration: 0.08 }, 0.8)
