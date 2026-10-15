@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changelog</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --text: #1d1d1b; --muted: #6b6a66; --line: #e3e1db; --head: #f0eee9;
+    --yes: #1f8a4c; --yes-bg: #e3f3e9; --no: #b5452f; --no-bg: #fbe9e4; --accent: #2f5bd3; --tab: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615; --card: #1e1e1c; --text: #ecebe7; --muted: #a09e98; --line: #33322f; --head: #262624;
+      --yes: #5cc58a; --yes-bg: #1b3325; --no: #ec8a73; --no-bg: #3a221c; --accent: #8aa8ff; --tab: #1e1e1c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 28px 16px 60px; }
+  h1 { margin: 0 0 2px; font-size: 24px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+  .tab { border: 1px solid transparent; border-bottom: none; background: none; color: var(--muted);
+    padding: 8px 16px; font: inherit; font-weight: 600; cursor: pointer; border-radius: 8px 8px 0 0; margin-bottom: -1px; }
+  .tab.on { background: var(--tab); color: var(--text); border-color: var(--line); }
+  .tab .n { display: inline-block; min-width: 18px; margin-left: 6px; padding: 0 5px; border-radius: 9px;
+    background: var(--no-bg); color: var(--no); font-size: 12px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .counts { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); }
+  .counts b { color: var(--text); }
+  .filter { color: var(--muted); display: flex; gap: 6px; align-items: center; cursor: pointer; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  table { width: 100%; border-collapse: collapse; min-width: 900px; }
+  th { background: var(--head); text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+    color: var(--muted); padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .c-id { width: 48px; color: var(--accent); font-weight: 700; }
+  .c-date { width: 96px; white-space: nowrap; color: var(--muted); }
+  .c-change { width: 34%; }
+  .c-tick { width: 84px; text-align: center; }
+  .title { font-weight: 600; }
+  .desc { color: var(--muted); margin-top: 2px; }
+  .scope { display: inline-block; font-size: 11px; font-weight: 600; color: var(--accent); margin-left: 6px; }
+  .tick { display: inline-block; width: 26px; height: 26px; line-height: 26px; border-radius: 6px; font-weight: 700; }
+  .tick.yes { background: var(--yes-bg); color: var(--yes); }
+  .tick.no { background: var(--no-bg); color: var(--no); }
+  ol { margin: 0; padding-left: 18px; }
+  li { margin: 1px 0; }
+  .none { color: var(--muted); }
+  code { background: var(--head); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; font-size: 12px; word-break: break-all; }
+  a { color: var(--accent); }
+  .empty { text-align: center; color: var(--muted); padding: 32px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="project-name"></h1>
+  <p class="sub">Every change, newest first. Red ✗ means that step hasn't happened yet.</p>
+  <div class="tabs" id="tabs"></div>
+  <div class="bar">
+    <div class="counts" id="counts"></div>
+    <label class="filter"><input type="checkbox" id="only-open"> Only show what isn't live yet</label>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr>
+        <th>#</th><th>Date</th><th>Change</th><th>Pushed</th><th>Merged</th><th>Published</th><th>What you need to do</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+/* ================= EDIT BELOW THIS LINE =================
+   PROJECT  Name shown at the top.
+   CLIENTS  One tab per client. A single-client project lists just one name (no tabs are shown).
+            To add a new client, add their name here. Never rename or remove a client with entries.
+   UPDATES  Newest entry first. Each entry:
+     id       Permanent number. New entry = highest id + 1. Never renumber or reuse.
+     date     YYYY-MM-DD
+     title    Short name of the change.
+     desc     1-2 plain sentences anyone could understand: what changed and why.
+     clients  "all" if it affects every client, otherwise a list, e.g. ["Aton"].
+     status   One line per affected client: [pushed, merged, published] as true/false.
+              Tick only what has actually been checked.
+     action   Numbered steps for Ana, one short line each, starting with a verb.
+              [] when nothing is needed. May use <b>, <code>, <a href="...">.
+*/
+const PROJECT = "Cristina Pirvulescu website";
+const CLIENTS = ["Cristina"];
+
+const UPDATES = [
+  {
+    id: 2,
+    date: "2026-10-15",
+    title: "New hero line and new story text",
+    desc: "The line shown during the opening scroll now reads \"Subtle beauty. Precisely crafted.\" The story section has Cristina's new five-paragraph text about Glasgow, London and Bucharest, with the closing paragraph shown as the large quote.",
+    clients: "all",
+    status: { "Cristina": [true, false, false] },
+    action: [
+      "Open the Vercel preview for this branch and check the hero line and story section",
+      "Tell Claude \"merge\" if it looks right"
+    ]
+  },
+  {
+    id: 1,
+    date: "2026-10-14",
+    title: "Smoother opening scroll, logo changes colour at the right moment",
+    desc: "The white fade at the top of the home page is now lighter for the browser, so it should feel smoother on phones. The logo also switches from white to dark halfway through the fade instead of too early.",
+    clients: "all",
+    status: { "Cristina": [true, true, true] },
+    action: []
+  }
+];
+/* ================= EDIT ABOVE THIS LINE ================= */
+
+const appliesTo = (u, c) => u.clients === "all" || (u.clients || []).includes(c);
+const st = (u, c) => (u.status && u.status[c]) || [false, false, false];
+const box = v => `<span class="tick ${v ? "yes" : "no"}">${v ? "✓" : "✗"}</span>`;
+let current = CLIENTS[0];
+
+try { const t = localStorage.getItem("cl-tab"); if (CLIENTS.includes(t)) current = t;
+      if (localStorage.getItem("cl-open") === "1") document.getElementById("only-open").checked = true; } catch (e) {}
+
+function render() {
+  document.getElementById("project-name").textContent = PROJECT;
+  document.title = PROJECT + " changelog";
+
+  const tabs = document.getElementById("tabs");
+  tabs.style.display = CLIENTS.length > 1 ? "" : "none";
+  tabs.innerHTML = CLIENTS.map(c => {
+    const open = UPDATES.filter(u => appliesTo(u, c) && !st(u, c)[2]).length;
+    return `<button class="tab ${c === current ? "on" : ""}" data-c="${c}">${c}${open ? `<span class="n">${open}</span>` : ""}</button>`;
+  }).join("");
+  tabs.querySelectorAll(".tab").forEach(b => b.onclick = () => {
+    current = b.dataset.c; try { localStorage.setItem("cl-tab", current); } catch (e) {} render();
+  });
+
+  const mine = UPDATES.filter(u => appliesTo(u, current));
+  const count = i => mine.filter(u => !st(u, current)[i]).length;
+  const needYou = mine.filter(u => !st(u, current)[2] && u.action && u.action.length).length;
+  document.getElementById("counts").innerHTML =
+    `<span><b>${needYou}</b> need you</span><span><b>${count(0)}</b> not pushed</span>` +
+    `<span><b>${count(1)}</b> not merged</span><span><b>${count(2)}</b> not live</span>`;
+
+  const onlyOpen = document.getElementById("only-open").checked;
+  const rows = mine.filter(u => !onlyOpen || !st(u, current)[2]);
+  document.getElementById("rows").innerHTML = rows.length ? rows.map(u => {
+    const [p, m, l] = st(u, current);
+    const scope = CLIENTS.length > 1 && u.clients === "all" ? `<span class="scope">ALL CLIENTS</span>` : "";
+    const act = l ? `<span class="none">Nothing for ${current}</span>` : u.action && u.action.length ? `<ol>${u.action.map(a => `<li>${a}</li>`).join("")}</ol>` : `<span class="none">Nothing</span>`;
+    return `<tr>
+      <td class="c-id">#${u.id}</td><td class="c-date">${u.date}</td>
+      <td class="c-change"><div class="title">${u.title}${scope}</div><div class="desc">${u.desc}</div></td>
+      <td class="c-tick">${box(p)}</td><td class="c-tick">${box(m)}</td><td class="c-tick">${box(l)}</td>
+      <td>${act}</td></tr>`;
+  }).join("") : `<tr><td colspan="7" class="empty">Nothing waiting. Everything is live.</td></tr>`;
+}
+
+document.getElementById("only-open").addEventListener("change", e => {
+  try { localStorage.setItem("cl-open", e.target.checked ? "1" : "0"); } catch (err) {} render();
+});
+render();
+</script>
+</body>
+</html>
