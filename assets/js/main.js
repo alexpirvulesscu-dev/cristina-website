@@ -41,19 +41,89 @@
     });
   }
 
-  /* ---------- consultation form → mailto draft ---------- */
+  /* ---------- consultation form: sent straight away, no email app ----------
+     The form posts to a small n8n workflow (its address is in the form's
+     data-endpoint). Until that address is filled in, it falls back to opening
+     an email draft, so nothing breaks. */
   var form = document.getElementById("consult-form");
   if (form) {
+    var shownAt = Date.now();
+    var statusEl = form.querySelector(".form-status");
+    var sendBtn = form.querySelector('button[type="submit"]');
+
+    // a friendly thank-you that replaces the form
+    var showThanks = function (name, email) {
+      var box = document.createElement("div");
+      box.className = "form-thanks";
+      var h = document.createElement("h3");
+      h.textContent = "Thank you" + (name ? ", " + name : "") + ".";
+      var p = document.createElement("p");
+      p.textContent = "Your message has reached us. We will reply to " + email + " as soon as we can.";
+      box.appendChild(h); box.appendChild(p);
+      form.replaceChildren(box);
+    };
+
+    // a calm error that points to the other ways to reach us
+    var showError = function () {
+      statusEl.textContent = "";
+      statusEl.appendChild(document.createTextNode("Sorry, that did not go through. Please message us on "));
+      var wa = document.createElement("a");
+      wa.href = "https://wa.me/40759949353"; wa.textContent = "WhatsApp";
+      wa.target = "_blank"; wa.rel = "noopener";
+      statusEl.appendChild(wa);
+      statusEl.appendChild(document.createTextNode(" or write to "));
+      var em = document.createElement("a");
+      em.href = "mailto:info@cpdentalaesthetics.com"; em.textContent = "info@cpdentalaesthetics.com";
+      statusEl.appendChild(em);
+      statusEl.appendChild(document.createTextNode("."));
+      sendBtn.disabled = false;
+      sendBtn.textContent = "Request a consultation";
+    };
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var name = form.elements.name.value.trim();
       var email = form.elements.email.value.trim();
       var message = form.elements.message.value.trim();
-      var subject = "Consultation request — " + name;
-      var body = message + "\n\n— " + name + " (" + email + ")";
-      window.location.href =
-        "mailto:info@cpdentalaesthetics.com?subject=" +
-        encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+      var endpoint = (form.getAttribute("data-endpoint") || "").trim();
+
+      // spam robots fill the hidden field or submit within a second or two:
+      // pretend it worked, send nothing
+      if (form.elements.website.value || Date.now() - shownAt < 2500) {
+        showThanks(name, email);
+        return;
+      }
+
+      // no workflow address yet: open an email draft, as before
+      if (!endpoint) {
+        var subject = "Consultation request — " + name;
+        var body = message + "\n\n— " + name + " (" + email + ")";
+        window.location.href =
+          "mailto:info@cpdentalaesthetics.com?subject=" +
+          encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        return;
+      }
+
+      statusEl.textContent = "";
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Sending…";
+      var ctrl = window.AbortController ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 15000);
+      fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name, email: email, message: message,
+          consent: true, page: location.href, sentAt: new Date().toISOString()
+        }),
+        signal: ctrl ? ctrl.signal : undefined
+      }).then(function (res) {
+        clearTimeout(timer);
+        if (res.ok) showThanks(name, email); else showError();
+      }).catch(function () {
+        clearTimeout(timer);
+        showError();
+      });
     });
   }
 
@@ -291,9 +361,31 @@
     y: 60, opacity: 0, duration: 1.1, ease: "power2.out"
   });
 
+  /* ---------- work: the two main cases, side by side ----------
+     Quiet and slow: each photo fades up a few pixels (Before first, After a
+     beat later) and the picture settles very slightly. A faint drift
+     continues while scrolling past. Motion-allowed only. */
+  document.querySelectorAll(".case-pair .ba-pair").forEach(function (pair) {
+    var figs = pair.querySelectorAll("figure");
+    var imgs = pair.querySelectorAll("img");
+    gsap.set(imgs, { scale: 1.06 });          // spare picture, so the drift never shows an edge
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: pair, start: "top 85%", once: true
+      }
+    })
+      .from(figs, { y: 26, opacity: 0, duration: 1.9, ease: "power3.out", stagger: 0.45 }, 0)
+      .from(imgs, { scale: 1.12, duration: 2.6, ease: "power2.out", stagger: 0.45 }, 0);
+    gsap.fromTo(imgs, { yPercent: -2 }, {
+      yPercent: 2, ease: "none",
+      scrollTrigger: { trigger: pair, start: "top bottom", end: "bottom top", scrub: true }
+    });
+  });
+
   /* ---------- work: scroll-driven before/after wipes ---------- */
   gsap.utils.toArray(".case").forEach(function (block) {
     var after = block.querySelector(".ba-after");
+    if (!after) return;   // the two main cases show side by side instead (see below)
     var edge = block.querySelector(".ba-edge");
     var labelB = block.querySelector(".ba-label-before");
     var labelA = block.querySelector(".ba-label-after");
@@ -334,6 +426,10 @@
   });
 
   /* ---------- testimonials + credentials: simple staggered reveals ---------- */
+  gsap.from(".fcard", {
+    scrollTrigger: { trigger: ".featured", start: "top 80%" },
+    y: 40, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.1
+  });
   gsap.from(".tcard", {
     scrollTrigger: { trigger: ".testimonials", start: "top 80%" },
     y: 40, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.08
@@ -356,4 +452,25 @@
 
   /* refresh once everything (fonts, images) is in */
   window.addEventListener("load", function () { ScrollTrigger.refresh(); });
+})();
+
+/* ---------- testimonial video pop-up ----------
+   The video file is only attached when someone opens the pop-up, so the page
+   never downloads it for visitors who don't press play. */
+(function () {
+  document.querySelectorAll("[data-open]").forEach(function (btn) {
+    var dlg = document.getElementById(btn.dataset.open);
+    if (!dlg || !dlg.showModal) return;
+    var vid = dlg.querySelector("video");
+    btn.addEventListener("click", function () {
+      if (!vid.getAttribute("src")) vid.setAttribute("src", vid.dataset.src);
+      dlg.showModal();
+      vid.play().catch(function () {});
+    });
+    // close on the X, or a click on the dark area outside the video
+    dlg.querySelector("[data-close]").addEventListener("click", function () { dlg.close(); });
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+    // always stop the sound when the pop-up closes (X, Esc, or outside click)
+    dlg.addEventListener("close", function () { vid.pause(); });
+  });
 })();
