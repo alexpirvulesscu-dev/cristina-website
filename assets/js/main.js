@@ -41,19 +41,89 @@
     });
   }
 
-  /* ---------- consultation form → mailto draft ---------- */
+  /* ---------- consultation form: sent straight away, no email app ----------
+     The form posts to a small n8n workflow (its address is in the form's
+     data-endpoint). Until that address is filled in, it falls back to opening
+     an email draft, so nothing breaks. */
   var form = document.getElementById("consult-form");
   if (form) {
+    var shownAt = Date.now();
+    var statusEl = form.querySelector(".form-status");
+    var sendBtn = form.querySelector('button[type="submit"]');
+
+    // a friendly thank-you that replaces the form
+    var showThanks = function (name, email) {
+      var box = document.createElement("div");
+      box.className = "form-thanks";
+      var h = document.createElement("h3");
+      h.textContent = "Thank you" + (name ? ", " + name : "") + ".";
+      var p = document.createElement("p");
+      p.textContent = "Your message has reached us. We will reply to " + email + " as soon as we can.";
+      box.appendChild(h); box.appendChild(p);
+      form.replaceChildren(box);
+    };
+
+    // a calm error that points to the other ways to reach us
+    var showError = function () {
+      statusEl.textContent = "";
+      statusEl.appendChild(document.createTextNode("Sorry, that did not go through. Please message us on "));
+      var wa = document.createElement("a");
+      wa.href = "https://wa.me/40759949353"; wa.textContent = "WhatsApp";
+      wa.target = "_blank"; wa.rel = "noopener";
+      statusEl.appendChild(wa);
+      statusEl.appendChild(document.createTextNode(" or write to "));
+      var em = document.createElement("a");
+      em.href = "mailto:info@cpdentalaesthetics.com"; em.textContent = "info@cpdentalaesthetics.com";
+      statusEl.appendChild(em);
+      statusEl.appendChild(document.createTextNode("."));
+      sendBtn.disabled = false;
+      sendBtn.textContent = "Request a consultation";
+    };
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var name = form.elements.name.value.trim();
       var email = form.elements.email.value.trim();
       var message = form.elements.message.value.trim();
-      var subject = "Consultation request — " + name;
-      var body = message + "\n\n— " + name + " (" + email + ")";
-      window.location.href =
-        "mailto:info@cpdentalaesthetics.com?subject=" +
-        encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+      var endpoint = (form.getAttribute("data-endpoint") || "").trim();
+
+      // spam robots fill the hidden field or submit within a second or two:
+      // pretend it worked, send nothing
+      if (form.elements.website.value || Date.now() - shownAt < 2500) {
+        showThanks(name, email);
+        return;
+      }
+
+      // no workflow address yet: open an email draft, as before
+      if (!endpoint) {
+        var subject = "Consultation request — " + name;
+        var body = message + "\n\n— " + name + " (" + email + ")";
+        window.location.href =
+          "mailto:info@cpdentalaesthetics.com?subject=" +
+          encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        return;
+      }
+
+      statusEl.textContent = "";
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Sending…";
+      var ctrl = window.AbortController ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 15000);
+      fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name, email: email, message: message,
+          consent: true, page: location.href, sentAt: new Date().toISOString()
+        }),
+        signal: ctrl ? ctrl.signal : undefined
+      }).then(function (res) {
+        clearTimeout(timer);
+        if (res.ok) showThanks(name, email); else showError();
+      }).catch(function () {
+        clearTimeout(timer);
+        showError();
+      });
     });
   }
 

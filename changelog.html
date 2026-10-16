@@ -95,6 +95,19 @@ const CLIENTS = ["Cristina"];
 
 const UPDATES = [
   {
+    id: 12,
+    date: "2026-10-16",
+    title: "Contact form sends straight away, plus privacy notice",
+    desc: "The contact form is ready to send messages by itself, with a thank-you message on the page, spam protection, a tick box to agree to the use of their details, and a draft privacy notice page linked from the form and the footer. Until the n8n address is added it still opens an email draft as before. Cerasela's testimonial label now matches Julie's.",
+    clients: "all",
+    status: { "Cristina": [false, false, false] },
+    action: [
+      "Build the n8n workflow (steps in the chat) and send Claude its Production webhook address.",
+      "Ask Cristina and a data-protection adviser to complete the orange text in the privacy notice page and check it covers Romania and the UK.",
+      "Test the form once on the live site after the address is added, and check the message arrives at info@cpdentalaesthetics.com."
+    ]
+  },
+  {
     id: 11,
     date: "2026-10-16",
     title: "Friendlier question on the contact form",
