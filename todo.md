@@ -24,4 +24,4 @@
 ## Next updates (plan first)
 - Kids section on the Services page (playful but on brand)
 - Privacy policy, terms and any other documents
-- English / Romanian toggle with full Romanian translation
+- English / Romanian toggle with full Romanian translation. PARKED on purpose (Ana, 16 Oct): translate only once the English copy is final, i.e. after Cristina's texts, the legal gaps and the lawyer's review. Plan when ready: separate Romanian pages (for search engines) plus a toggle, legal pages translated too.
