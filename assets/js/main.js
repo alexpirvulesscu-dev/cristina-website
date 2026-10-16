@@ -292,18 +292,22 @@
   });
 
   /* ---------- work: the two main cases, side by side ----------
-     A slow settle-in, a gentle drift while scrolling past, and one soft
-     light sweep over the After photo. Only runs when motion is allowed. */
+     A slow settle-in and a gentle drift while scrolling past. The After photo
+     then comes into focus (soft and a touch dark, then sharp) while the Before
+     eases back slightly, so the eye lands on the result. Motion-allowed only. */
   document.querySelectorAll(".case-pair .ba-pair").forEach(function (pair) {
     var imgs = pair.querySelectorAll("img");
     gsap.set(imgs, { scale: 1.1 });           // spare picture, so the drift never shows an edge
-    gsap.from(imgs, {
+    gsap.timeline({
       scrollTrigger: {
         trigger: pair, start: "top 85%", once: true,
         onEnter: function () { pair.classList.add("is-lit"); }
-      },
-      scale: 1.22, duration: 1.8, ease: "power2.out", stagger: 0.2
-    });
+      }
+    })
+      .from(imgs, { scale: 1.22, duration: 1.8, ease: "power2.out", stagger: 0.2 }, 0)
+      .fromTo(imgs[1], { filter: "blur(7px) brightness(0.88)" },
+                       { filter: "blur(0px) brightness(1)", duration: 1.5, ease: "power2.out" }, 0.6)
+      .to(imgs[0], { filter: "brightness(0.94) saturate(0.88)", duration: 1.2, ease: "power1.inOut" }, 1.4);
     gsap.fromTo(imgs, { yPercent: -3 }, {
       yPercent: 3, ease: "none",
       scrollTrigger: { trigger: pair, start: "top bottom", end: "bottom top", scrub: true }
