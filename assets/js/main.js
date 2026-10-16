@@ -293,17 +293,15 @@
 
   /* ---------- work: the two main cases, side by side ----------
      Quiet and slow: each photo fades up a few pixels (Before first, After a
-     beat later), the picture settles very slightly, and a fine hairline mount
-     then fades in (CSS). A faint drift continues while scrolling past.
-     Motion-allowed only. */
+     beat later) and the picture settles very slightly. A faint drift
+     continues while scrolling past. Motion-allowed only. */
   document.querySelectorAll(".case-pair .ba-pair").forEach(function (pair) {
     var figs = pair.querySelectorAll("figure");
     var imgs = pair.querySelectorAll("img");
     gsap.set(imgs, { scale: 1.06 });          // spare picture, so the drift never shows an edge
     gsap.timeline({
       scrollTrigger: {
-        trigger: pair, start: "top 85%", once: true,
-        onEnter: function () { pair.classList.add("is-lit"); }
+        trigger: pair, start: "top 85%", once: true
       }
     })
       .from(figs, { y: 26, opacity: 0, duration: 1.9, ease: "power3.out", stagger: 0.45 }, 0)
