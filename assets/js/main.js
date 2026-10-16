@@ -142,7 +142,7 @@
       end: function () { return mob() ? "+=252%" : "+=360%"; },
       pin: ".hero-stage",
       scrub: true,
-      refreshPriority: -2,       // refresh in page order: hero, then method, then the rest
+      refreshPriority: 2,        // HIGHER number = refreshed FIRST: hero, then method, then the rest, so later triggers count its pin spacing
       invalidateOnRefresh: true, // recompute the logo's centred start on resize
       onUpdate: function (self) {
         // Read the TIMELINE's own clock, not scroll progress: the timeline runs
@@ -223,7 +223,7 @@
       trigger: ".method-steps",
       start: "top 72%",     // first line lights up as it reaches mid-screen
       end: "bottom 55%",    // last line is lit by the time it leaves
-      refreshPriority: -1,  // refresh in page order: hero, then method, then the rest
+      refreshPriority: 1,   // higher = refreshed first: after the hero, before the rest
       onUpdate: function (self) { setActiveStep(self.progress); },
       onLeaveBack: clearSteps
     });
@@ -238,7 +238,7 @@
       start: "top top",
       end: "+=70%",
       pin: ".method-pin",
-      refreshPriority: -1,  // refresh in page order: hero, then method, then the rest
+      refreshPriority: 1,   // higher = refreshed first: after the hero, before the rest
       invalidateOnRefresh: true,
       onUpdate: function (self) { setActiveStep(self.progress); },
       onEnterBack: function () { if (analysisVideo && analysisVideo.paused) analysisVideo.play().catch(function () {}); }
