@@ -788,6 +788,8 @@ p a { border-bottom: 1px solid var(--line); }
 .consult-details li { padding: 10px 0; border-bottom: 1px solid var(--line); color: var(--muted); }
 .consult-contact { margin-top: 26px; line-height: 2.1; }
 .consult-contact a { color: var(--olive-deep); border-bottom: 1px solid var(--line); }
+/* the hint inside the message box is lighter than what a visitor types */
+.consult-form ::placeholder { color: var(--faint); opacity: 1; }
 .consult-form {
   border: 1px solid var(--line);
   border-radius: 2px;
