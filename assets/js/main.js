@@ -292,24 +292,24 @@
   });
 
   /* ---------- work: the two main cases, side by side ----------
-     A slow settle-in and a gentle drift while scrolling past. The After photo
-     then comes into focus (soft and a touch dark, then sharp) while the Before
-     eases back slightly, so the eye lands on the result. Motion-allowed only. */
+     Quiet and slow: each photo fades up a few pixels (Before first, After a
+     beat later), the picture settles very slightly, and a fine hairline mount
+     then fades in (CSS). A faint drift continues while scrolling past.
+     Motion-allowed only. */
   document.querySelectorAll(".case-pair .ba-pair").forEach(function (pair) {
+    var figs = pair.querySelectorAll("figure");
     var imgs = pair.querySelectorAll("img");
-    gsap.set(imgs, { scale: 1.1 });           // spare picture, so the drift never shows an edge
+    gsap.set(imgs, { scale: 1.06 });          // spare picture, so the drift never shows an edge
     gsap.timeline({
       scrollTrigger: {
         trigger: pair, start: "top 85%", once: true,
         onEnter: function () { pair.classList.add("is-lit"); }
       }
     })
-      .from(imgs, { scale: 1.22, duration: 1.8, ease: "power2.out", stagger: 0.2 }, 0)
-      .fromTo(imgs[1], { filter: "blur(7px) brightness(0.88)" },
-                       { filter: "blur(0px) brightness(1)", duration: 1.5, ease: "power2.out" }, 0.6)
-      .to(imgs[0], { filter: "brightness(0.94) saturate(0.88)", duration: 1.2, ease: "power1.inOut" }, 1.4);
-    gsap.fromTo(imgs, { yPercent: -3 }, {
-      yPercent: 3, ease: "none",
+      .from(figs, { y: 26, opacity: 0, duration: 1.9, ease: "power3.out", stagger: 0.45 }, 0)
+      .from(imgs, { scale: 1.12, duration: 2.6, ease: "power2.out", stagger: 0.45 }, 0);
+    gsap.fromTo(imgs, { yPercent: -2 }, {
+      yPercent: 2, ease: "none",
       scrollTrigger: { trigger: pair, start: "top bottom", end: "bottom top", scrub: true }
     });
   });
