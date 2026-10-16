@@ -670,7 +670,16 @@ p a { border-bottom: 1px solid var(--line); }
   display: grid; place-items: center; font-size: 10px; padding-left: 2px;
 }
 /* video pop-up */
-.vid-dialog { border: 0; border-radius: 14px; padding: 0; width: min(960px, 92vw); background: #000; overflow: hidden; }
+/* the site-wide "* { margin: 0 }" reset removes a dialog's built-in centring,
+   so margin: auto is put back here to centre the pop-up on screen */
+.vid-dialog {
+  border: 0; border-radius: 14px; padding: 0;
+  margin: auto;
+  width: min(1180px, 94vw);
+  max-width: none;
+  max-height: 92vh;
+  background: #000; overflow: hidden;
+}
 .vid-dialog::backdrop { background: rgba(20, 26, 21, 0.78); }
 .vid-dialog video { width: 100%; aspect-ratio: 16 / 9; background: #000; }
 .vid-close {
@@ -947,6 +956,7 @@ p a { border-bottom: 1px solid var(--line); }
   .featured { grid-template-columns: 1fr; }
   .fcard footer { flex-direction: column; align-items: flex-start; }
   .watch { width: 100%; justify-content: center; }
+  .vid-dialog { width: 100vw; border-radius: 0; }
   .ba-pair img { aspect-ratio: 1 / 1.1; }
   .credgrid { grid-template-columns: 1fr; }
   .loc-grid { grid-template-columns: 1fr; }
