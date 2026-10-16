@@ -1294,3 +1294,9 @@ p a { border-bottom: 1px solid var(--line); }
   .kids { border-radius: 26px; }
   .kids-grid { grid-template-columns: 1fr; }
 }
+
+.legal-date { color: var(--faint); font-size: 12.5px; margin: -14px 0 20px; }
+.legal li strong { color: var(--ink); font-weight: 600; }
+.legal .todo-copy { font-size: inherit; }
+.legal p { margin: 0 0 14px; }
+.legal h2 + p { margin-top: 0; }
