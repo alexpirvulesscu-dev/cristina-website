@@ -22,3 +22,6 @@ mocks/
 
 # Original full-size Cerasela photos (the site uses the cropped copies)
 assets/img/cases/cerasela/
+
+# Original full-size photos of the extra cases (the site uses the resized case*-before/after files)
+assets/img/cases/case */
