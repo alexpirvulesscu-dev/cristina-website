@@ -606,7 +606,8 @@ p a { border-bottom: 1px solid var(--line); }
 }
 .tname { font-size: 13.5px; color: var(--ink); }
 .tmeta { color: var(--olive-deep); }
-.tcard .tmeta { font-size: 10.5px; letter-spacing: 0; white-space: nowrap; }  /* keep each card's label on one line */
+/* five stars in the brand green, in place of a treatment / place label */
+.tstars { color: var(--olive); font-size: 15px; line-height: 1; letter-spacing: 3px; }
 
 /* main testimonials: real patients with before / after photos. Two side by
    side on desktop, stacked on mobile. One card alone stays centred. */
