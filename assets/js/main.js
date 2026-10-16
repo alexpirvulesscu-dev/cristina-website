@@ -142,6 +142,7 @@
       end: function () { return mob() ? "+=252%" : "+=360%"; },
       pin: ".hero-stage",
       scrub: true,
+      refreshPriority: -2,       // refresh in page order: hero, then method, then the rest
       invalidateOnRefresh: true, // recompute the logo's centred start on resize
       onUpdate: function (self) {
         // Read the TIMELINE's own clock, not scroll progress: the timeline runs
@@ -203,7 +204,17 @@
     var idx = Math.min(steps.length - 1, Math.floor(p * steps.length));
     steps.forEach(function (s, i) { s.classList.toggle("is-active", i === idx); });
   }
-  if (mob()) {
+  function clearSteps() { steps.forEach(function (s) { s.classList.remove("is-active"); }); }
+
+  /* Phone vs desktop is chosen with gsap.matchMedia, so it is decided again
+     whenever the window is resized or a tablet is rotated (it used to be decided
+     once, at page load). When a query stops matching, GSAP removes that mode's
+     trigger and its pin spacer for us; the function each mode returns is its
+     extra clean-up. "not all and (max-width: 760px)" is the exact opposite of the
+     phone query, so there is never a gap or an overlap (same split as mob()). */
+  var mm = gsap.matchMedia();
+
+  mm.add("(max-width: 760px)", function () {
     /* PHONES: no pin. The pinned content is far taller than the screen, so the
        highlight used to advance off-screen while the section sat frozen. Instead
        let the section scroll naturally and light each line (Scan → Measure →
@@ -212,23 +223,28 @@
       trigger: ".method-steps",
       start: "top 72%",     // first line lights up as it reaches mid-screen
       end: "bottom 55%",    // last line is lit by the time it leaves
+      refreshPriority: -1,  // refresh in page order: hero, then method, then the rest
       onUpdate: function (self) { setActiveStep(self.progress); },
-      onLeaveBack: function () { steps.forEach(function (s) { s.classList.remove("is-active"); }); }
+      onLeaveBack: clearSteps
     });
-  } else {
-    /* DESKTOP: video + steps sit side by side, so pin the pair and scrub the
-       highlight — everything stays visible while pinned. */
+    return clearSteps;      // lights off when this mode is switched away from
+  });
+
+  mm.add("not all and (max-width: 760px)", function () {
+    /* DESKTOP: video + steps sit side by side, so pin the pair and drive the
+       highlight from scroll — everything stays visible while pinned. */
     ScrollTrigger.create({
       trigger: ".method",
       start: "top top",
       end: "+=70%",
       pin: ".method-pin",
-      scrub: true,
+      refreshPriority: -1,  // refresh in page order: hero, then method, then the rest
       invalidateOnRefresh: true,
       onUpdate: function (self) { setActiveStep(self.progress); },
       onEnterBack: function () { if (analysisVideo && analysisVideo.paused) analysisVideo.play().catch(function () {}); }
     });
-  }
+    return clearSteps;
+  });
   /* The video simply eases in — a plain fade with a whisper of scale, played
      once and finished well before the section pins. Deliberately NOT scrubbed
      and with no vertical movement: the old scrubbed y-tween fought the pin as
