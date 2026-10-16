@@ -159,7 +159,12 @@
         nav.classList.toggle("pre-logo", t < NAV_READY_AT);
       },
       onLeave: function () { nav.classList.remove("on-dark", "pre-logo"); },
-      onEnterBack: function () { nav.classList.add("on-dark"); }
+      // GSAP runs onUpdate BEFORE onEnterBack, so adding "on-dark" here blindly
+      // left the nav dark when scrolling back up into the already-light hero.
+      // Use the same timeline-clock rule as onUpdate instead.
+      onEnterBack: function (self) {
+        nav.classList.toggle("on-dark", self.animation.time() <= LIGHT_AT);
+      }
     }
   });
   heroTl
