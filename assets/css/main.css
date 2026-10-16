@@ -561,15 +561,16 @@ p a { border-bottom: 1px solid var(--line); }
 
 /* testimonials — soft tinted, borderless, quote-mark led: deliberately NOT
    the bordered white style used by the credentials band */
+/* balanced columns, so any number of cards of different lengths sits evenly */
 .testimonials {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(16px, 2vw, 28px);
+  column-count: 3;
+  column-gap: clamp(16px, 2vw, 28px);
   text-align: left;
 }
 .tcard {
   position: relative;
-  margin: 0;
+  margin: 0 0 clamp(16px, 2vw, 28px);
+  break-inside: avoid;
   background: var(--panel-tint);
   border-radius: 14px;
   padding: 34px 30px 28px;
@@ -694,7 +695,6 @@ p a { border-bottom: 1px solid var(--line); }
   background: rgba(240, 244, 248, 0.2); color: #fff; border: 0;
   width: 36px; height: 36px; border-radius: 50%; font-size: 20px; line-height: 1; cursor: pointer;
 }
-.testimonials { margin-top: 0; }
 
 /* credentials — a distinct dark green band so the trust marks read as a
    separate register from the testimonials above */
@@ -959,7 +959,7 @@ p a { border-bottom: 1px solid var(--line); }
   .story-photo img { position: static; width: 100%; height: auto; }
   .case-flip .case-media { order: 0; }
   .case-flip .case-copy { order: 1; }
-  .testimonials { grid-template-columns: 1fr; }
+  .testimonials { column-count: 1; }
   .featured { grid-template-columns: 1fr; }
   .fcard footer { flex-direction: column; align-items: flex-start; }
   .watch { width: 100%; justify-content: center; }
