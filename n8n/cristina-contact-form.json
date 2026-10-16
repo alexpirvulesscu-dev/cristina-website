@@ -1,0 +1,200 @@
+{
+  "name": "Cristina — Contact form",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cp-contact",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "c382131e-e35f-47eb-b986-12554605e281",
+      "name": "Contact form (website)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "e14e8bc5-438b-4a0b-944e-d6382c780383"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Tidies what the website form sent and decides if it is a real enquiry.\n// The form sends JSON; n8n puts it under \"body\".\nconst raw = $input.first().json.body;\nlet b = {};\ntry { b = typeof raw === 'string' ? JSON.parse(raw) : (raw || {}); } catch (e) { b = {}; }\n\n// trim, cap the length, and stop line breaks sneaking into single-line fields\nconst clean = (s, n) => String(s == null ? '' : s).replace(/\\r/g, '').trim().slice(0, n);\nconst name = clean(b.name, 120).replace(/\\n/g, ' ');\nconst email = clean(b.email, 200).replace(/\\s/g, '');\nconst message = clean(b.message, 4000);\n\n// real enquiry = they ticked the consent box, the hidden \"website\" trap is empty,\n// every field is filled in, and the email looks like an email\nconst ok = b.consent === true && !b.website && !!name && !!message &&\n           /^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email);\n\nreturn [{ json: { ok, name, email, message, page: clean(b.page, 300), sentAt: clean(b.sentAt, 40) } }];"
+      },
+      "id": "8f179e01-5488-4b3d-a251-d0137beb9a24",
+      "name": "Check and tidy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f74b1268-bb81-4104-9522-dca126805864",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "09c7306e-4f7d-4f8a-b798-c2d17cb0b32e",
+      "name": "Real enquiry?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "info@cpdentalaesthetics.com",
+        "subject": "={{ 'Consultation request — ' + $json.name }}",
+        "emailType": "text",
+        "message": "={{ 'New consultation request from the website\\n\\nName: ' + $json.name + '\\nEmail: ' + $json.email + '\\n\\nMessage:\\n' + $json.message + '\\n\\nSent: ' + $json.sentAt + '\\nPage: ' + $json.page }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Cristina Pirvulescu website",
+          "replyTo": "={{ $json.email }}"
+        }
+      },
+      "id": "0c2f211c-d554-422d-a81b-86462f66d4ab",
+      "name": "Send to Cristina's inbox",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true }) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "0496531f-dca7-4c80-8de8-9cbc4bc61f7b",
+      "name": "Tell the website it worked",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false }) }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "bab364df-8a74-4007-a0e3-404683d4ba13",
+      "name": "Tell the website it was rejected",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "Contact form (website)": {
+      "main": [
+        [
+          {
+            "node": "Check and tidy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check and tidy": {
+      "main": [
+        [
+          {
+            "node": "Real enquiry?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Real enquiry?": {
+      "main": [
+        [
+          {
+            "node": "Send to Cristina's inbox",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tell the website it was rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Cristina's inbox": {
+      "main": [
+        [
+          {
+            "node": "Tell the website it worked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
