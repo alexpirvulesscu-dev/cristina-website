@@ -604,6 +604,82 @@ p a { border-bottom: 1px solid var(--line); }
 .tname { font-size: 14.5px; color: var(--ink); }
 .tmeta { color: var(--olive-deep); }
 
+/* main testimonials: real patients with before / after photos. Two side by
+   side on desktop, stacked on mobile. One card alone stays centred. */
+.featured {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 2.4vw, 34px);
+  text-align: left;
+  margin-bottom: clamp(18px, 2.4vw, 34px);
+}
+.featured > .fcard:only-child { grid-column: 1 / -1; max-width: 640px; margin: 0 auto; width: 100%; }
+.fcard {
+  background: var(--panel-tint);
+  border-radius: 14px;
+  padding: clamp(18px, 2vw, 26px);
+  display: flex; flex-direction: column;
+  gap: 22px;
+}
+.ba-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ba-pair figure { position: relative; margin: 0; border-radius: 10px; overflow: hidden; }
+.ba-pair img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 52%; }
+.ba-pair figcaption {
+  position: absolute; left: 10px; bottom: 10px;
+  background: rgba(30, 39, 32, 0.78);
+  color: #f0f4f8;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.fquote {
+  font-family: var(--serif);
+  font-size: clamp(19px, 1.5vw, 24px);
+  line-height: 1.42;
+  color: var(--heading);
+  margin: 0;
+}
+.fquote::before {
+  content: "\201C";
+  font-size: 1.6em; line-height: 0;
+  color: var(--olive);
+  vertical-align: -0.28em;
+  margin-right: 4px;
+}
+.fcard footer {
+  margin-top: auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+}
+.fcard .who { display: flex; flex-direction: column; gap: 4px; }
+.watch {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--hero-dark); color: #f0f4f8;
+  border: 0; border-radius: 99px;
+  padding: 11px 20px 11px 14px;
+  font: 500 14px var(--sans);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.watch:hover, .watch:focus-visible { background: var(--olive-deep); }
+.watch .play {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--sage); color: var(--hero-dark);
+  display: grid; place-items: center; font-size: 10px; padding-left: 2px;
+}
+/* video pop-up */
+.vid-dialog { border: 0; border-radius: 14px; padding: 0; width: min(960px, 92vw); background: #000; overflow: hidden; }
+.vid-dialog::backdrop { background: rgba(20, 26, 21, 0.78); }
+.vid-dialog video { width: 100%; aspect-ratio: 16 / 9; background: #000; }
+.vid-close {
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(240, 244, 248, 0.2); color: #fff; border: 0;
+  width: 36px; height: 36px; border-radius: 50%; font-size: 20px; line-height: 1; cursor: pointer;
+}
+.testimonials { margin-top: 0; }
+
 /* credentials — a distinct dark green band so the trust marks read as a
    separate register from the testimonials above */
 .credbar { background: var(--hero-dark); }
@@ -868,6 +944,10 @@ p a { border-bottom: 1px solid var(--line); }
   .case-flip .case-media { order: 0; }
   .case-flip .case-copy { order: 1; }
   .testimonials { grid-template-columns: 1fr; }
+  .featured { grid-template-columns: 1fr; }
+  .fcard footer { flex-direction: column; align-items: flex-start; }
+  .watch { width: 100%; justify-content: center; }
+  .ba-pair img { aspect-ratio: 1 / 1.1; }
   .credgrid { grid-template-columns: 1fr; }
   .loc-grid { grid-template-columns: 1fr; }
   .price-groups { grid-template-columns: 1fr; }

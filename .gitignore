@@ -12,3 +12,12 @@ Cristina Pirvulescu Logo.png
 
 # Local editor / tooling config
 .claude/
+
+# Raw interview footage (huge, stays on this Mac)
+source-video/
+
+# Local design mocks
+mocks/
+
+# Full Julie interview (70 MB). Held back until the 1-minute cut replaces it
+assets/video/julie-story.mp4

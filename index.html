@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://cpdentalaesthetics.com/">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
-<link rel="stylesheet" href="assets/css/main.css?v=41">
+<link rel="stylesheet" href="assets/css/main.css?v=42">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -158,7 +158,34 @@
       <p class="eyebrow">In their words</p>
       <h2 class="section-title">Why this matters<br>in Bucharest.</h2>
 
-      <!-- Testimonials — PLACEHOLDER copy; replace with real patient words -->
+      <!-- Main testimonials: real patients with before / after photos, side by side on desktop.
+           Second one still to come. -->
+      <div class="featured">
+        <article class="fcard">
+          <div class="ba-pair">
+            <figure>
+              <img src="assets/img/cases/wedding-before.jpg" alt="Julie's smile before treatment" width="622" height="1172" loading="lazy">
+              <figcaption>Before</figcaption>
+            </figure>
+            <figure>
+              <img src="assets/img/cases/wedding-after.jpg" alt="Julie's smile after treatment" width="654" height="1172" loading="lazy">
+              <figcaption>After</figcaption>
+            </figure>
+          </div>
+          <blockquote class="fquote">I’d been thinking about this for 17 years. I didn’t smile anymore. Dr. Cristina was amazing, not just in the dentistry, but in how she dealt with my anxiety and made me feel like a real human being. It’s given me 10, 20 years back in my confidence.</blockquote>
+          <footer>
+            <div class="who">
+              <span class="tname">Julie</span>
+              <span class="mono tmeta">Wedding smile · UK</span>
+            </div>
+            <button class="watch" type="button" data-open="julie-video">
+              <span class="play" aria-hidden="true">▶</span> Watch her story
+            </button>
+          </footer>
+        </article>
+      </div>
+
+      <!-- Text-only testimonials — PLACEHOLDER copy; replace with real patient words -->
       <div class="testimonials">
         <figure class="tcard">
           <p class="tquote">Placeholder testimonial. A patient’s own words about the consultation and the result will sit here, kept short and specific once the real quotes are collected.</p>
@@ -295,6 +322,11 @@
 <script src="assets/js/vendor/gsap.min.js"></script>
 <script src="assets/js/vendor/ScrollTrigger.min.js"></script>
 <script src="assets/js/vendor/lenis.min.js"></script>
-<script src="assets/js/main.js?v=41"></script>
+<dialog id="julie-video" class="vid-dialog" aria-label="Julie's story, video">
+  <video controls playsinline preload="none" poster="assets/img/cases/wedding-after.jpg" data-src="assets/video/julie-story.mp4"></video>
+  <button class="vid-close" type="button" aria-label="Close video" data-close>&times;</button>
+</dialog>
+
+<script src="assets/js/main.js?v=42"></script>
 </body>
 </html>

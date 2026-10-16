@@ -334,6 +334,10 @@
   });
 
   /* ---------- testimonials + credentials: simple staggered reveals ---------- */
+  gsap.from(".fcard", {
+    scrollTrigger: { trigger: ".featured", start: "top 80%" },
+    y: 40, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.1
+  });
   gsap.from(".tcard", {
     scrollTrigger: { trigger: ".testimonials", start: "top 80%" },
     y: 40, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.08
@@ -356,4 +360,25 @@
 
   /* refresh once everything (fonts, images) is in */
   window.addEventListener("load", function () { ScrollTrigger.refresh(); });
+})();
+
+/* ---------- testimonial video pop-up ----------
+   The video file is only attached when someone opens the pop-up, so the page
+   never downloads it for visitors who don't press play. */
+(function () {
+  document.querySelectorAll("[data-open]").forEach(function (btn) {
+    var dlg = document.getElementById(btn.dataset.open);
+    if (!dlg || !dlg.showModal) return;
+    var vid = dlg.querySelector("video");
+    btn.addEventListener("click", function () {
+      if (!vid.getAttribute("src")) vid.setAttribute("src", vid.dataset.src);
+      dlg.showModal();
+      vid.play().catch(function () {});
+    });
+    // close on the X, or a click on the dark area outside the video
+    dlg.querySelector("[data-close]").addEventListener("click", function () { dlg.close(); });
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+    // always stop the sound when the pop-up closes (X, Esc, or outside click)
+    dlg.addEventListener("close", function () { vid.pause(); });
+  });
 })();
