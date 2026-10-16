@@ -958,31 +958,28 @@ p a { border-bottom: 1px solid var(--line); }
 .services { padding: clamp(120px, 18vh, 220px) var(--gutter) clamp(90px, 12vh, 140px); }
 .services-head { max-width: 820px; margin: 0 auto clamp(56px, 8vh, 96px); text-align: center; }
 .services-head .services-note { color: var(--muted); max-width: 60ch; margin: 24px auto 0; font-size: 15.5px; }
-.price-groups {
+.service-groups {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(40px, 5vw, 80px) clamp(48px, 6vw, 96px);
   max-width: 1100px;
   margin: 0 auto;
 }
-.price-group-title {
+.service-group-title {
   font-family: var(--serif); font-weight: 400;
   font-size: clamp(24px, 2.4vw, 32px);
   color: var(--heading);
   margin-bottom: 18px;
 }
-.price-list { list-style: none; border-top: 1px solid var(--line); }
-.price-row {
+.service-list { list-style: none; border-top: 1px solid var(--line); }
+.service-row {
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 24px;
   padding: 18px 0;
   border-bottom: 1px solid var(--line);
 }
-.price-name { color: var(--ink); font-size: 16.5px; display: flex; flex-direction: column; gap: 3px; }
-.price-sub { color: var(--faint); font-size: 13px; }
-.price-figs { text-align: right; white-space: nowrap; display: flex; flex-direction: column; gap: 2px; }
-.price-figs .eur { color: var(--olive-deep); font-size: 15px; letter-spacing: 0.02em; }
-.price-figs .ron { color: var(--muted); font-size: 12.5px; }
+.service-name { color: var(--ink); font-size: 16.5px; display: flex; flex-direction: column; gap: 3px; }
+.service-sub { color: var(--faint); font-size: 13px; }
 
 /* ---------- footer ---------- */
 .footer {
@@ -1019,7 +1016,7 @@ p a { border-bottom: 1px solid var(--line); }
   .ba-pair img { aspect-ratio: 1 / 1.1; }
   .credgrid { grid-template-columns: 1fr; }
   .loc-grid { grid-template-columns: 1fr; }
-  .price-groups { grid-template-columns: 1fr; }
+  .service-groups { grid-template-columns: 1fr; }
   .consult-inner { grid-template-columns: 1fr; }
   .nav-links { gap: 20px; font-size: 13px; }
   .nav-logo img { width: 104px; }
@@ -1180,3 +1177,7 @@ p a { border-bottom: 1px solid var(--line); }
   .grain, .scroll-hint span::after { animation: none; }
   html { scroll-behavior: auto; }
 }
+
+/* GDC card: registration details under the description */
+.credit-reg { font-size: 12.5px; line-height: 1.5; margin-top: 2px; }
+.credit-reg a { color: var(--sage); border-bottom: 1px solid var(--line-light); }
