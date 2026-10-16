@@ -7,6 +7,7 @@
    ========================================================================== */
 
 :root {
+  --photo-radius: 14px;     /* every boxed photo shares this corner */
   --bg: #f0f4f8;            /* palette near-white — the site ground */
   --panel: #ffffff;         /* cards, form */
   --panel-tint: #e9efe9;    /* green-grey tinted panels */
@@ -512,7 +513,7 @@ p a { border-bottom: 1px solid var(--line); }
 .case-tall .ba { max-width: 340px; margin: 0 auto; }
 .case-tall .ba img { aspect-ratio: 2 / 3; object-position: 50% 25%; }
 .ba {
-  position: relative; overflow: hidden; border-radius: 2px;
+  position: relative; overflow: hidden; border-radius: var(--photo-radius);
   border: 1px solid var(--line);
   box-shadow: 0 18px 44px rgba(44, 48, 54, 0.12);
 }
@@ -627,9 +628,19 @@ p a { border-bottom: 1px solid var(--line); }
   gap: 22px;
 }
 .ba-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.ba-pair figure { position: relative; margin: 0; border-radius: 10px; overflow: hidden; }
+.ba-pair figure { position: relative; margin: 0; border-radius: var(--photo-radius); overflow: hidden; }
 .ba-pair img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 52%; }
+.ba-pair figure::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.26) 50%, transparent 62%);
+  transform: translateX(-110%);
+  pointer-events: none;
+}
+.ba-pair.is-lit figure:last-child::after { animation: sheen 2s ease-out 1s 1 both; }
+@keyframes sheen { to { transform: translateX(110%); } }
 .ba-pair figcaption {
+  z-index: 1;
   position: absolute; left: 10px; bottom: 10px;
   background: rgba(30, 39, 32, 0.78);
   color: #f0f4f8;
