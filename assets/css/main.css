@@ -604,7 +604,7 @@ p a { border-bottom: 1px solid var(--line); }
   display: flex; flex-direction: column; gap: 4px;
   margin-top: auto;
 }
-.tname { font-size: 13.5px; color: var(--ink); }
+.tname { font-size: 13.5px; color: var(--ink);  font-weight: 600;}
 .tmeta { color: var(--olive-deep); }
 /* five stars in the brand green, in place of a treatment / place label */
 .tstars { color: var(--olive); font-size: 15px; line-height: 1; letter-spacing: 3px; }
