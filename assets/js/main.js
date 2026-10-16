@@ -282,6 +282,13 @@
     var labelB = block.querySelector(".ba-label-before");
     var labelA = block.querySelector(".ba-label-after");
     var wipe = { p: 0 };
+    // Photo width, kept up to date by a resize watcher instead of being measured
+    // on every scroll frame (each measure forces the browser to re-lay-out the
+    // page). If the watcher isn't available it stays 0 and we measure live.
+    var afterW = 0;
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () { afterW = after.offsetWidth; }).observe(after);
+    }
     gsap.to(wipe, {
       p: 1, ease: "none",
       /* Anchored to the PHOTO itself (never the surrounding block, whose
@@ -299,7 +306,7 @@
       onUpdate: function () {
         var pct = wipe.p * 100;
         after.style.clipPath = "inset(0 " + (100 - pct) + "% 0 0)";
-        edge.style.transform = "translateX(" + (pct / 100 * after.offsetWidth - 1) + "px)";
+        edge.style.transform = "translateX(" + (pct / 100 * (afterW || after.offsetWidth) - 1) + "px)";
         if (labelA) labelA.style.opacity = wipe.p > 0.5 ? 1 : 0.35;
         if (labelB) labelB.style.opacity = wipe.p > 0.5 ? 0.35 : 1;
       }
