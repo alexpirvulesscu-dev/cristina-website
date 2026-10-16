@@ -561,30 +561,32 @@ p a { border-bottom: 1px solid var(--line); }
 
 /* testimonials — soft tinted, borderless, quote-mark led: deliberately NOT
    the bordered white style used by the credentials band */
-/* balanced columns, so any number of cards of different lengths sits evenly */
+/* ten short reviews: an even grid, every card the same height.
+   5 across on desktop (two rows), 2 across on tablet, 1 on phones */
 .testimonials {
-  column-count: 3;
-  column-gap: clamp(16px, 2vw, 28px);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-rows: 1fr;           /* all rows share the tallest card's height */
+  gap: clamp(12px, 1.4vw, 20px);
   text-align: left;
 }
 .tcard {
   position: relative;
-  margin: 0 0 clamp(16px, 2vw, 28px);
-  break-inside: avoid;
+  margin: 0;
   background: var(--panel-tint);
   border-radius: 14px;
-  padding: 34px 30px 28px;
+  padding: 40px 22px 22px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   overflow: hidden;
 }
 .tcard::before {
   content: "\201C";              /* decorative opening quote */
   position: absolute;
-  top: 6px; left: 22px;
+  top: 4px; left: 18px;
   font-family: var(--serif);
-  font-size: 96px;
+  font-size: 64px;
   line-height: 1;
   color: var(--sage);
   opacity: 0.55;
@@ -593,17 +595,18 @@ p a { border-bottom: 1px solid var(--line); }
 .tquote {
   position: relative;
   font-family: var(--serif);
-  font-size: clamp(18px, 1.35vw, 22px);
+  font-size: 15.5px;
   line-height: 1.45;
   color: var(--heading);
-  margin: 8px 0 0;
+  margin: 0;
 }
 .tcard figcaption {
   display: flex; flex-direction: column; gap: 4px;
   margin-top: auto;
 }
-.tname { font-size: 14.5px; color: var(--ink); }
+.tname { font-size: 13.5px; color: var(--ink); }
 .tmeta { color: var(--olive-deep); }
+.tcard .tmeta { font-size: 10.5px; letter-spacing: 0; white-space: nowrap; }  /* keep each card's label on one line */
 
 /* main testimonials: real patients with before / after photos. Two side by
    side on desktop, stacked on mobile. One card alone stays centred. */
@@ -944,6 +947,9 @@ p a { border-bottom: 1px solid var(--line); }
 .footer-fine { margin-top: 18px; color: var(--faint); }
 
 /* ---------- responsive ---------- */
+@media (max-width: 1100px) {
+  .testimonials { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 900px) {
   .hero-title { top: clamp(84px, 11vh, 140px); }
   .hero-h1 { font-size: clamp(44px, 13.5vw, 96px); }
@@ -959,7 +965,6 @@ p a { border-bottom: 1px solid var(--line); }
   .story-photo img { position: static; width: 100%; height: auto; }
   .case-flip .case-media { order: 0; }
   .case-flip .case-copy { order: 1; }
-  .testimonials { column-count: 1; }
   .featured { grid-template-columns: 1fr; }
   .fcard footer { flex-direction: column; align-items: flex-start; }
   .watch { width: 100%; justify-content: center; }
@@ -1113,6 +1118,7 @@ p a { border-bottom: 1px solid var(--line); }
 
 /* ---------- small phones: keep the big hero type inside the screen ---------- */
 @media (max-width: 560px) {
+  .testimonials { grid-template-columns: 1fr; }
   .hero-h1 { font-size: clamp(38px, 11.5vw, 60px); }
   .hero-h2 { font-size: clamp(35px, 10.7vw, 54px); top: 52vh; }
   .hero-sub { font-size: 15px; }
