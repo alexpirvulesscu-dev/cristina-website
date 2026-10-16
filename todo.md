@@ -14,6 +14,13 @@
 - Connect the domain, then lock the n8n workflow to https://cpdentalaesthetics.com
 - Merge testimonial-julie and services-credentials only after Cristina's text is in (orange text would go live)
 
+## Legal documents (item 5, in progress)
+- Decide who the legal business behind the site is (Cristina herself, Retiply, or LR Clinics). Not known yet: the privacy and identification pages keep orange placeholders until then.
+- Cristina: Romanian dental college registration number, malpractice insurance details, complaints route
+- Check with a Romanian lawyer: ANPC SAL/SOL icons, dentist advertising code (in force 1 July 2025) against our copy and testimonials, data agreement between Cristina and Retiply, UK ICO fee
+- Terms of treatment and booking belong to LR Clinics and Smile Solutions: link to theirs or say "set by the clinic"
+- Patient photo consent forms (parental consent for under 18) kept on file
+
 ## Next updates (plan first)
 - Kids section on the Services page (playful but on brand)
 - Privacy policy, terms and any other documents
