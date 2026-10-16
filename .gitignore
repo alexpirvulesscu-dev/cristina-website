@@ -19,3 +19,6 @@ source-video/
 # Local design mocks
 mocks/
 
+
+# Original full-size Cerasela photos (the site uses the cropped copies)
+assets/img/cases/cerasela/

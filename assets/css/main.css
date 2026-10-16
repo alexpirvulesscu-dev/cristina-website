@@ -669,6 +669,13 @@ p a { border-bottom: 1px solid var(--line); }
   background: var(--sage); color: var(--hero-dark);
   display: grid; place-items: center; font-size: 10px; padding-left: 2px;
 }
+.glink {
+  font-size: 14px; color: var(--olive-deep);
+  border-bottom: 1px solid var(--sage);
+  padding-bottom: 2px;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.glink:hover, .glink:focus-visible { color: var(--heading); border-color: var(--olive); }
 /* video pop-up */
 /* the site-wide "* { margin: 0 }" reset removes a dialog's built-in centring,
    so margin: auto is put back here to centre the pop-up on screen */
