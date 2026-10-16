@@ -575,18 +575,18 @@ p a { border-bottom: 1px solid var(--line); }
   margin: 0;
   background: var(--panel-tint);
   border-radius: 14px;
-  padding: 40px 22px 22px;
+  padding: 34px 20px 18px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   overflow: hidden;
 }
 .tcard::before {
   content: "\201C";              /* decorative opening quote */
   position: absolute;
-  top: 4px; left: 18px;
+  top: 2px; left: 16px;
   font-family: var(--serif);
-  font-size: 64px;
+  font-size: 52px;
   line-height: 1;
   color: var(--sage);
   opacity: 0.55;
@@ -595,8 +595,8 @@ p a { border-bottom: 1px solid var(--line); }
 .tquote {
   position: relative;
   font-family: var(--serif);
-  font-size: 16px;
-  line-height: 1.45;
+  font-size: 15.5px;
+  line-height: 1.4;
   color: var(--heading);
   margin: 0;
 }
@@ -682,6 +682,16 @@ p a { border-bottom: 1px solid var(--line); }
 }
 .glink-sm { font-size: 13px; align-self: flex-start; margin-top: 4px; }
 .glink:hover, .glink:focus-visible { color: var(--heading); border-color: var(--olive); }
+/* name + stars on the left, review link on the right: one compact footer row */
+.testimonials .tcard figcaption {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 12px;
+  row-gap: 4px;
+  align-items: end;
+}
+.testimonials .tcard .tname, .testimonials .tcard .tstars { grid-column: 1; }
+.testimonials .tcard .glink { grid-column: 2; grid-row: 1 / span 2; margin: 0; align-self: end; }
 /* video pop-up */
 /* the site-wide "* { margin: 0 }" reset removes a dialog's built-in centring,
    so margin: auto is put back here to centre the pop-up on screen */
