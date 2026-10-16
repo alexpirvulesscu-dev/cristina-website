@@ -142,6 +142,7 @@
       end: function () { return mob() ? "+=252%" : "+=360%"; },
       pin: ".hero-stage",
       scrub: true,
+      refreshPriority: 2,        // HIGHER number = refreshed FIRST: hero, then method, then the rest, so later triggers count its pin spacing
       invalidateOnRefresh: true, // recompute the logo's centred start on resize
       onUpdate: function (self) {
         // Read the TIMELINE's own clock, not scroll progress: the timeline runs
@@ -159,7 +160,12 @@
         nav.classList.toggle("pre-logo", t < NAV_READY_AT);
       },
       onLeave: function () { nav.classList.remove("on-dark", "pre-logo"); },
-      onEnterBack: function () { nav.classList.add("on-dark"); }
+      // GSAP runs onUpdate BEFORE onEnterBack, so adding "on-dark" here blindly
+      // left the nav dark when scrolling back up into the already-light hero.
+      // Use the same timeline-clock rule as onUpdate instead.
+      onEnterBack: function (self) {
+        nav.classList.toggle("on-dark", self.animation.time() <= LIGHT_AT);
+      }
     }
   });
   heroTl
@@ -198,7 +204,17 @@
     var idx = Math.min(steps.length - 1, Math.floor(p * steps.length));
     steps.forEach(function (s, i) { s.classList.toggle("is-active", i === idx); });
   }
-  if (mob()) {
+  function clearSteps() { steps.forEach(function (s) { s.classList.remove("is-active"); }); }
+
+  /* Phone vs desktop is chosen with gsap.matchMedia, so it is decided again
+     whenever the window is resized or a tablet is rotated (it used to be decided
+     once, at page load). When a query stops matching, GSAP removes that mode's
+     trigger and its pin spacer for us; the function each mode returns is its
+     extra clean-up. "not all and (max-width: 760px)" is the exact opposite of the
+     phone query, so there is never a gap or an overlap (same split as mob()). */
+  var mm = gsap.matchMedia();
+
+  mm.add("(max-width: 760px)", function () {
     /* PHONES: no pin. The pinned content is far taller than the screen, so the
        highlight used to advance off-screen while the section sat frozen. Instead
        let the section scroll naturally and light each line (Scan → Measure →
@@ -207,23 +223,28 @@
       trigger: ".method-steps",
       start: "top 72%",     // first line lights up as it reaches mid-screen
       end: "bottom 55%",    // last line is lit by the time it leaves
+      refreshPriority: 1,   // higher = refreshed first: after the hero, before the rest
       onUpdate: function (self) { setActiveStep(self.progress); },
-      onLeaveBack: function () { steps.forEach(function (s) { s.classList.remove("is-active"); }); }
+      onLeaveBack: clearSteps
     });
-  } else {
-    /* DESKTOP: video + steps sit side by side, so pin the pair and scrub the
-       highlight — everything stays visible while pinned. */
+    return clearSteps;      // lights off when this mode is switched away from
+  });
+
+  mm.add("not all and (max-width: 760px)", function () {
+    /* DESKTOP: video + steps sit side by side, so pin the pair and drive the
+       highlight from scroll — everything stays visible while pinned. */
     ScrollTrigger.create({
       trigger: ".method",
       start: "top top",
       end: "+=70%",
       pin: ".method-pin",
-      scrub: true,
+      refreshPriority: 1,   // higher = refreshed first: after the hero, before the rest
       invalidateOnRefresh: true,
       onUpdate: function (self) { setActiveStep(self.progress); },
       onEnterBack: function () { if (analysisVideo && analysisVideo.paused) analysisVideo.play().catch(function () {}); }
     });
-  }
+    return clearSteps;
+  });
   /* The video simply eases in — a plain fade with a whisper of scale, played
      once and finished well before the section pins. Deliberately NOT scrubbed
      and with no vertical movement: the old scrubbed y-tween fought the pin as
@@ -277,6 +298,13 @@
     var labelB = block.querySelector(".ba-label-before");
     var labelA = block.querySelector(".ba-label-after");
     var wipe = { p: 0 };
+    // Photo width, kept up to date by a resize watcher instead of being measured
+    // on every scroll frame (each measure forces the browser to re-lay-out the
+    // page). If the watcher isn't available it stays 0 and we measure live.
+    var afterW = 0;
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () { afterW = after.offsetWidth; }).observe(after);
+    }
     gsap.to(wipe, {
       p: 1, ease: "none",
       /* Anchored to the PHOTO itself (never the surrounding block, whose
@@ -294,7 +322,7 @@
       onUpdate: function () {
         var pct = wipe.p * 100;
         after.style.clipPath = "inset(0 " + (100 - pct) + "% 0 0)";
-        edge.style.transform = "translateX(" + (pct / 100 * after.offsetWidth - 1) + "px)";
+        edge.style.transform = "translateX(" + (pct / 100 * (afterW || after.offsetWidth) - 1) + "px)";
         if (labelA) labelA.style.opacity = wipe.p > 0.5 ? 1 : 0.35;
         if (labelB) labelB.style.opacity = wipe.p > 0.5 ? 0.35 : 1;
       }

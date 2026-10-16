@@ -95,6 +95,20 @@ const CLIENTS = ["Cristina"];
 
 const UPDATES = [
   {
+    id: 3,
+    date: "2026-10-16",
+    title: "Scroll animation tidy-up",
+    desc: "Small behind-the-scenes fixes to the scroll animations: the menu no longer shows the wrong colour for a moment when you scroll back up, the before/after sliders do less work, and the Method section switches layout correctly if the window is resized or a tablet is rotated.",
+    clients: "all",
+    status: { "Cristina": [false, false, false] },
+    action: [
+      "Run <code>cd ~/projects/cristina-website &amp;&amp; git push -u origin scroll-tidy</code> in your Terminal.",
+      "Open the preview link on your phone and scroll the opening slowly. Note any stutter, any jump when the address bar moves, or a soft-looking logo.",
+      "On a computer, drag the preview window narrow and wide and check the Method section still works.",
+      "Tell Claude to merge if it all looks right."
+    ]
+  },
+  {
     id: 2,
     date: "2026-10-15",
     title: "New hero line and new story text",
