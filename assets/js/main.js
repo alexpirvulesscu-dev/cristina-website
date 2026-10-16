@@ -291,9 +291,29 @@
     y: 60, opacity: 0, duration: 1.1, ease: "power2.out"
   });
 
+  /* ---------- work: the two main cases, side by side ----------
+     A slow settle-in, a gentle drift while scrolling past, and one soft
+     light sweep over the After photo. Only runs when motion is allowed. */
+  document.querySelectorAll(".case-pair .ba-pair").forEach(function (pair) {
+    var imgs = pair.querySelectorAll("img");
+    gsap.set(imgs, { scale: 1.1 });           // spare picture, so the drift never shows an edge
+    gsap.from(imgs, {
+      scrollTrigger: {
+        trigger: pair, start: "top 85%", once: true,
+        onEnter: function () { pair.classList.add("is-lit"); }
+      },
+      scale: 1.22, duration: 1.8, ease: "power2.out", stagger: 0.2
+    });
+    gsap.fromTo(imgs, { yPercent: -3 }, {
+      yPercent: 3, ease: "none",
+      scrollTrigger: { trigger: pair, start: "top bottom", end: "bottom top", scrub: true }
+    });
+  });
+
   /* ---------- work: scroll-driven before/after wipes ---------- */
   gsap.utils.toArray(".case").forEach(function (block) {
     var after = block.querySelector(".ba-after");
+    if (!after) return;   // the two main cases show side by side instead (see below)
     var edge = block.querySelector(".ba-edge");
     var labelB = block.querySelector(".ba-label-before");
     var labelA = block.querySelector(".ba-label-after");
@@ -337,24 +357,6 @@
   gsap.from(".fcard", {
     scrollTrigger: { trigger: ".featured", start: "top 80%" },
     y: 40, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.1
-  });
-  /* before / after photos in the two main testimonials: a slow settle-in,
-     a gentle drift while scrolling past, and one soft light sweep over the
-     After photo. (Only runs when motion is allowed: see "reduced" above.) */
-  document.querySelectorAll(".fcard .ba-pair").forEach(function (pair) {
-    var imgs = pair.querySelectorAll("img");
-    gsap.set(imgs, { scale: 1.1 });           // a little spare picture, so the drift never shows an edge
-    gsap.from(imgs, {
-      scrollTrigger: {
-        trigger: pair, start: "top 85%", once: true,
-        onEnter: function () { pair.classList.add("is-lit"); }
-      },
-      scale: 1.22, duration: 1.8, ease: "power2.out", stagger: 0.2
-    });
-    gsap.fromTo(imgs, { yPercent: -3 }, {
-      yPercent: 3, ease: "none",
-      scrollTrigger: { trigger: pair, start: "top bottom", end: "bottom top", scrub: true }
-    });
   });
   gsap.from(".tcard", {
     scrollTrigger: { trigger: ".testimonials", start: "top 80%" },
