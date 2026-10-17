@@ -95,6 +95,15 @@ const CLIENTS = ["Cristina"];
 
 const UPDATES = [
   {
+    id: 22,
+    date: "2026-10-17",
+    title: "Contact form: removed the email-app fallback",
+    desc: "The contact form no longer points at an email app behind the scenes, which some browsers could flag as insecure. It only sends through the website's own secure route.",
+    clients: "all",
+    status: { "Cristina": [false, false, false] },
+    action: []
+  },
+  {
     id: 21,
     date: "2026-10-17",
     title: "Slimmer credentials and a children band on the home page",
