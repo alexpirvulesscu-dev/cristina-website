@@ -1238,7 +1238,7 @@ p a { border-bottom: 1px solid var(--line); }
 .kids-grid {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(14px, 1.6vw, 22px);
   text-align: left;
 }
