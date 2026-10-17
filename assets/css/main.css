@@ -284,8 +284,14 @@ p a { border-bottom: 1px solid var(--line); }
      with it instead of discarding a CSS translateX(-50%) on refresh */
   z-index: 2;
   height: 90vh; width: auto; max-width: none;
+  /* the shadow lives on this wrapper, so it follows her faded outline */
   filter: drop-shadow(0 30px 60px rgba(10, 16, 11, 0.4));
-  /* the bottom edge melts into the page (shadow included) instead of ending in a hard line */
+}
+.hero-cutout img {
+  display: block; height: 100%; width: auto; max-width: none;
+  /* the bottom edge melts into the page instead of ending in a hard line.
+     (The fade is on the picture only: a mask on the same element as the shadow
+     would cut the shadow off along the picture's rectangle.) */
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 74%, rgba(0,0,0,0.6) 88%, transparent 100%);
           mask-image: linear-gradient(to bottom, #000 0%, #000 74%, rgba(0,0,0,0.6) 88%, transparent 100%);
 }
@@ -433,6 +439,8 @@ p a { border-bottom: 1px solid var(--line); }
 }
 .story-photo {
   margin: 0;
+  /* background-removed cutout: the shadow sits on the figure so it follows her faded outline, not a box */
+  filter: drop-shadow(0 22px 44px rgba(44, 48, 54, 0.22));
   display: flex;
   justify-content: center;        /* centred within her half, not jammed right */
   align-items: flex-end;
@@ -445,8 +453,6 @@ p a { border-bottom: 1px solid var(--line); }
   max-height: 82vh;
   max-width: none;
   object-fit: contain; object-position: bottom center;
-  /* background-removed cutout: shadow follows her outline, not a box */
-  filter: drop-shadow(0 22px 44px rgba(44, 48, 54, 0.22));
   /* her body is cropped at the bottom — fade it out instead of cutting hard */
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 6%, #000 72%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
           mask-image: linear-gradient(to bottom, transparent 0%, #000 6%, #000 72%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
@@ -1080,7 +1086,7 @@ p a { border-bottom: 1px solid var(--line); }
   }
   /* soften the hard bottom edge of her photo (where her arms are cropped) so
      she fades into the stage instead of cutting off abruptly */
-  .hero-cutout {
+  .hero-cutout img {
     -webkit-mask-image: linear-gradient(to bottom, #000 74%, rgba(0,0,0,0.35) 90%, transparent 100%);
             mask-image: linear-gradient(to bottom, #000 74%, rgba(0,0,0,0.35) 90%, transparent 100%);
   }
