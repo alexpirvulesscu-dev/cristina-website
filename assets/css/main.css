@@ -284,7 +284,16 @@ p a { border-bottom: 1px solid var(--line); }
      with it instead of discarding a CSS translateX(-50%) on refresh */
   z-index: 2;
   height: 90vh; width: auto; max-width: none;
+  /* the shadow lives on this wrapper, so it follows her faded outline */
   filter: drop-shadow(0 30px 60px rgba(10, 16, 11, 0.4));
+}
+.hero-cutout img {
+  display: block; height: 100%; width: auto; max-width: none;
+  /* the bottom edge melts into the page instead of ending in a hard line.
+     (The fade is on the picture only: a mask on the same element as the shadow
+     would cut the shadow off along the picture's rectangle.) */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 74%, rgba(0,0,0,0.6) 88%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 74%, rgba(0,0,0,0.6) 88%, transparent 100%);
 }
 /* "It simply looks like you." — centred, revealed over her on scroll */
 .hero-h2 {
@@ -302,6 +311,10 @@ p a { border-bottom: 1px solid var(--line); }
   margin: 0;
 }
 .hero-h2 em { font-style: italic; color: #8ec94a; }
+/* the two lines are separate boxes so each can glide to its own spot in the intro (desktop) */
+.hero-h2 .hl { display: block; width: max-content; margin: 0 auto; transform-origin: 0 0; will-change: transform; }
+/* empty slot above the intro paragraph: reserves the room the title lands in (two lines) */
+.hero-intro-title { font-family: var(--serif); font-size: clamp(30px, 3.4vw, 50px); line-height: 1.05; height: 2.1em; margin-bottom: 22px; visibility: hidden; }
 /* intro block — appears after she glides right */
 .hero-intro {
   position: absolute;
@@ -368,15 +381,11 @@ p a { border-bottom: 1px solid var(--line); }
   /* the clip's background is composited to the exact page color (#F0F4F8),
      so no box, no shadow — it blends straight into the page */
   background: var(--bg);
+  /* soft feathered edges on all four sides instead of a hard box */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%), linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%), linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
 }
-.method-corners i {
-  position: absolute; width: 18px; height: 18px;
-  border-color: var(--olive); border-style: solid; opacity: 0.9;
-}
-.method-corners i:nth-child(1) { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
-.method-corners i:nth-child(2) { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
-.method-corners i:nth-child(3) { bottom: 26px; left: -1px; border-width: 0 0 1px 1px; }
-.method-corners i:nth-child(4) { bottom: 26px; right: -1px; border-width: 0 1px 1px 0; }
 .method-media-label { display: block; margin-top: 12px; color: var(--faint); }
 .method-copy .section-title { margin-bottom: 46px; }
 .method-steps { list-style: none; border-top: 1px solid var(--line); }
@@ -430,6 +439,8 @@ p a { border-bottom: 1px solid var(--line); }
 }
 .story-photo {
   margin: 0;
+  /* background-removed cutout: the shadow sits on the figure so it follows her faded outline, not a box */
+  filter: drop-shadow(0 22px 44px rgba(44, 48, 54, 0.22));
   display: flex;
   justify-content: center;        /* centred within her half, not jammed right */
   align-items: flex-end;
@@ -442,11 +453,10 @@ p a { border-bottom: 1px solid var(--line); }
   max-height: 82vh;
   max-width: none;
   object-fit: contain; object-position: bottom center;
-  /* background-removed cutout: shadow follows her outline, not a box */
-  filter: drop-shadow(0 22px 44px rgba(44, 48, 54, 0.22));
   /* her body is cropped at the bottom — fade it out instead of cutting hard */
-  -webkit-mask-image: linear-gradient(to bottom, #000 68%, rgba(0,0,0,0.55) 88%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 68%, rgba(0,0,0,0.55) 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 6%, #000 72%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 6%, #000 72%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-composite: source-in; mask-composite: intersect;   /* soft on all four sides, no rectangle */
 }
 /* the journey, read as a drawn route: each city arrives with its own dot,
    and the connecting line draws itself between them */
@@ -975,6 +985,7 @@ p a { border-bottom: 1px solid var(--line); }
   .hero-cutout { height: 77vh; }
   .hero-h2 { top: 52vh; }
   .hero-intro { right: var(--gutter); max-width: none; }
+  .hero-intro-title { display: none; }
   .hero-sub { font-size: 16.5px; }
   .method-pin { grid-template-columns: 1fr; gap: 40px; padding: 80px var(--gutter); }
   .method-media { max-width: 420px; }
@@ -1073,20 +1084,9 @@ p a { border-bottom: 1px solid var(--line); }
       0 3px 12px rgba(8,12,8,0.85),
       0 0 34px rgba(8,12,8,0.7);
   }
-  /* the four green corners must hug the VIDEO, not the whole media box (which
-     also holds the caption below). Give the corner frame the video's exact box
-     — same width, 4:5 aspect — so the bottom pair lands on the video's edge. */
-  .method-corners {
-    position: absolute; top: 0; left: 0; right: 0;
-    aspect-ratio: 4 / 5;
-    pointer-events: none;
-  }
-  .method-corners i:nth-child(3) { bottom: -1px; }
-  .method-corners i:nth-child(4) { bottom: -1px; }
-
   /* soften the hard bottom edge of her photo (where her arms are cropped) so
      she fades into the stage instead of cutting off abruptly */
-  .hero-cutout {
+  .hero-cutout img {
     -webkit-mask-image: linear-gradient(to bottom, #000 74%, rgba(0,0,0,0.35) 90%, transparent 100%);
             mask-image: linear-gradient(to bottom, #000 74%, rgba(0,0,0,0.35) 90%, transparent 100%);
   }
@@ -1278,6 +1278,7 @@ p a { border-bottom: 1px solid var(--line); }
 .cred .mono { display: block; color: var(--sage); font-size: 11px; margin: 0 0 8px 32px; }
 .cred p { color: rgba(240, 244, 248, 0.72); font-size: 14px; line-height: 1.55; margin-left: 32px; }
 .cred .reg { margin-top: 8px; font-size: 12px; }
+.cred .reg-num { font-size: 10.5px; letter-spacing: 0; white-space: nowrap; }   /* registration number stays on one line */
 .cred .reg a { color: var(--sage); border-bottom: 1px solid var(--line-light); }
 
 /* the children band on the home page */

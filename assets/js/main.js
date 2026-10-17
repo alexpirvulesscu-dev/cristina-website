@@ -153,7 +153,19 @@
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     a.addEventListener("click", function (e) {
       var target = document.querySelector(a.getAttribute("href"));
-      if (target) { e.preventDefault(); lenis.scrollTo(target, { offset: 0 }); }
+      // buttons jump straight to the section, no long glide. The pinned sections add height as
+      // the page scrolls, so the jump re-checks its landing spot a few frames and corrects itself.
+      if (target) {
+        e.preventDefault();
+        var tries = 0;
+        (function jump() {
+          lenis.resize();   // refresh Lenis' idea of the page length (the pins make it longer than it first thinks)
+          lenis.scrollTo(target.getBoundingClientRect().top + window.scrollY, { immediate: true, force: true });
+          requestAnimationFrame(function () {
+            if (Math.abs(target.getBoundingClientRect().top) > 2 && ++tries < 8) jump();
+          });
+        })();
+      }
     });
   });
 
@@ -251,19 +263,44 @@
         filter: "brightness(0.9) drop-shadow(0 30px 60px rgba(10,16,11,0.4))" },
       { xPercent: heroCutX, y: function () { return mob() ? "-18vh" : "0vh"; }, filter: "brightness(1) drop-shadow(0 30px 60px rgba(10,16,11,0.4))", ease: "none", duration: 0.52 }, 0)
     .to(".scroll-hint", { opacity: 0, ease: "none", duration: 0.12 }, 0.1)
-    // "It simply looks like you." revealed only once she is up (hidden until now)
+    // the title appears only once she is up (hidden until now)
     .fromTo("#hero-line2",
       { opacity: 0, y: 30, filter: "blur(8px)" },
       { opacity: 1, y: 0, filter: "blur(0px)", ease: "none", duration: 0.16 }, 0.52)
     // the stage warms to light; she brightens
     .to(".hero-wash", { opacity: 1, ease: "none", duration: 0.14 }, 0.64)
-    .to("#hero-cutout", { filter: "brightness(1.03) drop-shadow(0 30px 60px rgba(44,54,44,0.18))", ease: "none", duration: 0.14 }, 0.64)
-    // line 2 gives way; she glides right; the intro copy + CTAs come in on the left
-    .to("#hero-line2", { opacity: 0, y: -30, ease: "none", duration: 0.08 }, 0.8)
-    .to("#hero-cutout", { x: function () { return mob() ? "0vw" : "24vw"; }, ease: "none", duration: 0.16 }, 0.82)
-    .fromTo("#hero-intro",
-      { opacity: 0, x: -40 },
-      { opacity: 1, x: 0, ease: "none", duration: 0.14 }, 0.86)
+    .to("#hero-cutout", { filter: "brightness(1.03) drop-shadow(0 30px 60px rgba(44,54,44,0.18))", ease: "none", duration: 0.14 }, 0.64);
+
+  if (!mob()) {
+    // DESKTOP: the title does not fade away. Both lines shrink and slide to the left
+    // until they sit exactly where the intro heading lives, then the paragraph arrives under them.
+    var introEl = document.getElementById("hero-intro");
+    var slotEl = document.getElementById("hero-intro-title");
+    var h2El = document.getElementById("hero-line2");
+    var lineFs = function () { return parseFloat(getComputedStyle(slotEl).fontSize); };
+    var landX = function (i, el) {
+      return introEl.offsetLeft + slotEl.offsetLeft - (h2El.offsetLeft + el.offsetLeft);
+    };
+    var landY = function (i, el) {
+      var lh = lineFs() * 1.05;
+      return (introEl.offsetTop - introEl.offsetHeight / 2 + slotEl.offsetTop + i * lh) - (h2El.offsetTop + el.offsetTop);
+    };
+    var landScale = function (i, el) { return lineFs() / parseFloat(getComputedStyle(el).fontSize); };
+    heroTl
+      // white on the dark stage turns to ink as the stage lightens
+      .to("#hero-line2 .hl", { color: "#2c3036", textShadow: "0 0 0 rgba(0,0,0,0)", ease: "none", duration: 0.12 }, 0.72)
+      .to("#hero-line2 .hl em", { color: "#6b8e23", ease: "none", duration: 0.12 }, 0.72)
+      .to("#hero-line2 .hl", { x: landX, y: landY, scale: landScale, ease: "power2.inOut", duration: 0.22 }, 0.78)
+      .to("#hero-cutout", { x: "24vw", ease: "none", duration: 0.18 }, 0.8)
+      .fromTo("#hero-intro", { opacity: 0 }, { opacity: 1, ease: "none", duration: 0.12 }, 0.94);
+  } else {
+    // PHONES: unchanged, the title fades and the intro comes in
+    heroTl
+      .to("#hero-line2", { opacity: 0, y: -30, ease: "none", duration: 0.08 }, 0.8)
+      .to("#hero-cutout", { x: "0vw", ease: "none", duration: 0.16 }, 0.82)
+      .fromTo("#hero-intro", { opacity: 0, x: -40 }, { opacity: 1, x: 0, ease: "none", duration: 0.14 }, 0.86);
+  }
+  heroTl
     .to({}, { duration: 0.08 }); // held beat before the hero releases
   }
 
