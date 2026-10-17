@@ -47,6 +47,17 @@
      an email draft, so nothing breaks. */
   var form = document.getElementById("consult-form");
   if (form) {
+    // the form's own messages follow the page language (<html lang="ro"> on the Romanian pages)
+    var ro = document.documentElement.lang === "ro";
+    var TXT = ro ? {
+      thanks: "Vă mulțumim", thanksBody1: "Mesajul dumneavoastră a ajuns la noi. Vă vom răspunde la ", thanksBody2: " cât mai curând posibil.",
+      err1: "Ne cerem scuze, mesajul nu a fost trimis. Vă rugăm să ne scrieți pe ", err2: " sau la ",
+      send: "Solicitați o consultație", sending: "Se trimite…", subject: "Solicitare de consultație — "
+    } : {
+      thanks: "Thank you", thanksBody1: "Your message has reached us. We will reply to ", thanksBody2: " as soon as we can.",
+      err1: "Sorry, that did not go through. Please message us on ", err2: " or write to ",
+      send: "Request a consultation", sending: "Sending…", subject: "Consultation request — "
+    };
     var shownAt = Date.now();
     var statusEl = form.querySelector(".form-status");
     var sendBtn = form.querySelector('button[type="submit"]');
@@ -56,9 +67,9 @@
       var box = document.createElement("div");
       box.className = "form-thanks";
       var h = document.createElement("h3");
-      h.textContent = "Thank you" + (name ? ", " + name : "") + ".";
+      h.textContent = TXT.thanks + (name ? ", " + name : "") + ".";
       var p = document.createElement("p");
-      p.textContent = "Your message has reached us. We will reply to " + email + " as soon as we can.";
+      p.textContent = TXT.thanksBody1 + email + TXT.thanksBody2;
       box.appendChild(h); box.appendChild(p);
       form.replaceChildren(box);
     };
@@ -66,18 +77,18 @@
     // a calm error that points to the other ways to reach us
     var showError = function () {
       statusEl.textContent = "";
-      statusEl.appendChild(document.createTextNode("Sorry, that did not go through. Please message us on "));
+      statusEl.appendChild(document.createTextNode(TXT.err1));
       var wa = document.createElement("a");
       wa.href = "https://wa.me/40759949353"; wa.textContent = "WhatsApp";
       wa.target = "_blank"; wa.rel = "noopener";
       statusEl.appendChild(wa);
-      statusEl.appendChild(document.createTextNode(" or write to "));
+      statusEl.appendChild(document.createTextNode(TXT.err2));
       var em = document.createElement("a");
       em.href = "mailto:info@cpdentalaesthetics.com"; em.textContent = "info@cpdentalaesthetics.com";
       statusEl.appendChild(em);
       statusEl.appendChild(document.createTextNode("."));
       sendBtn.disabled = false;
-      sendBtn.textContent = "Request a consultation";
+      sendBtn.textContent = TXT.send;
     };
 
     form.addEventListener("submit", function (e) {
@@ -96,7 +107,7 @@
 
       // no workflow address yet: open an email draft, as before
       if (!endpoint) {
-        var subject = "Consultation request — " + name;
+        var subject = TXT.subject + name;
         var body = message + "\n\n— " + name + " (" + email + ")";
         window.location.href =
           "mailto:info@cpdentalaesthetics.com?subject=" +
@@ -106,7 +117,7 @@
 
       statusEl.textContent = "";
       sendBtn.disabled = true;
-      sendBtn.textContent = "Sending…";
+      sendBtn.textContent = TXT.sending;
       var ctrl = window.AbortController ? new AbortController() : null;
       var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 15000);
       fetch(endpoint, {
@@ -114,7 +125,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name, email: email, message: message,
-          consent: true, page: location.href, sentAt: new Date().toISOString()
+          consent: true, page: location.href, lang: document.documentElement.lang, sentAt: new Date().toISOString()
         }),
         signal: ctrl ? ctrl.signal : undefined
       }).then(function (res) {
