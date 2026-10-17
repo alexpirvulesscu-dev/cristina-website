@@ -23,4 +23,4 @@
 ## Next updates (plan first)
 - Kids section on the Services page (playful but on brand)
 - Privacy policy, terms and any other documents
-- English / Romanian toggle with full Romanian translation. PARKED on purpose (Ana, 16 Oct): translate only once the English copy is final, i.e. after Cristina's texts, the legal gaps and the lawyer's review. Plan when ready: separate Romanian pages (for search engines) plus a toggle, legal pages translated too.
+- Romanian version: home, services and cases are built under /ro/ (EN | RO switch in the menu). Still to do: the Romanian privacy and terms pages (after the legal changes are merged). Cristina, a Romanian-speaking dentist, should read all the Romanian text once for wording and terms. Julie's story video is still in English, so it needs Romanian subtitles if wanted. Optional: add the page language to the enquiry email (small n8n change).
