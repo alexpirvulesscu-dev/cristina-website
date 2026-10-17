@@ -1,0 +1,109 @@
+HOW TO UPDATE THE EMAIL IN n8n (two steps, about 5 minutes)
+
+Open your workflow "Cristina - Contact form" in n8n.
+
+=== STEP A: the code step called "Check and tidy" ===
+1. Double-click "Check and tidy".
+2. Click in the code box, select everything (Cmd + A) and delete it.
+3. Paste the whole block below, then close the panel.
+
+----- START OF BLOCK A -----
+// Tidies what the website form sent and decides if it is a real enquiry.
+// The form sends JSON; n8n puts it under "body".
+const raw = $input.first().json.body;
+let b = {};
+try { b = typeof raw === 'string' ? JSON.parse(raw) : (raw || {}); } catch (e) { b = {}; }
+
+// trim, cap the length, and stop line breaks sneaking into single-line fields
+const clean = (s, n) => String(s == null ? '' : s).replace(/\r/g, '').trim().slice(0, n);
+const name = clean(b.name, 120).replace(/\n/g, ' ');
+const email = clean(b.email, 200).replace(/\s/g, '');
+const message = clean(b.message, 4000);
+
+// real enquiry = they ticked the consent box, the hidden "website" trap is empty,
+// every field is filled in, and the email looks like an email
+const ok = b.consent === true && !b.website && !!name && !!message &&
+           /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+
+// ---- prepare the text for the designed email. Everything a patient typed is made safe first,
+// so nothing they write can change how the email looks or behave like code.
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const firstName = name.split(' ')[0] || name;
+let sentLocal = clean(b.sentAt, 40);
+try {
+  const d = new Date(sentLocal);
+  if (!isNaN(d)) sentLocal = d.toLocaleString('en-GB', { timeZone: 'Europe/Bucharest', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' (Bucharest time)';
+} catch (e) {}
+const replyHref = 'mailto:' + email + '?subject=' + encodeURIComponent('Your consultation request') +
+  '&body=' + encodeURIComponent('Dear ' + firstName + ',\n\nThank you for getting in touch.\n\n');
+
+return [{ json: {
+  ok, name, email, message, page: clean(b.page, 300), sentAt: clean(b.sentAt, 40),
+  nameHtml: esc(name), firstNameHtml: esc(firstName), emailHtml: esc(email),
+  messageHtml: esc(message).replace(/\n/g, '<br>'),
+  sentLocal: esc(sentLocal), replyHref: esc(replyHref)
+} }];
+----- END OF BLOCK A -----
+
+=== STEP B: the step called "Send to Cristina's inbox" ===
+1. Double-click "Send to Cristina's inbox".
+2. Subject: click the field, select everything, and paste:
+
+----- START OF SUBJECT -----
+={{ 'New consultation request: ' + $json.name }}
+----- END OF SUBJECT -----
+
+3. Email Type: change "Text" to "HTML".
+4. Message: click the field, select everything, delete it, and paste the block below.
+   (If n8n shows the field as plain text, hover it and choose "Expression" first so it shows the {{ }} parts.)
+
+----- START OF BLOCK B -----
+=<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#F0F4F8;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F0F4F8;">New consultation request from {{ $json.nameHtml }}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F0F4F8;padding:28px 12px;">
+<tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#FFFFFF;border-radius:16px;overflow:hidden;">
+
+<tr><td align="center" bgcolor="#1E2720" style="background:#1E2720;padding:32px 32px 28px 32px;">
+<a href="https://cpdentalaesthetics.com" style="text-decoration:none;"><img src="https://cristina-website-liart.vercel.app/assets/img/logo-white.png" width="260" alt="Cristina Pirvulescu, Dental Aesthetics" style="display:block;width:260px;max-width:100%;height:auto;border:0;margin:0 auto;"></a>
+</td></tr>
+<tr><td style="height:5px;line-height:5px;font-size:0;background:#6B8E23;">&nbsp;</td></tr>
+
+<tr><td style="padding:32px 32px 4px 32px;">
+<span style="display:inline-block;background:#E9EFE9;color:#55721C;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;padding:7px 14px;border-radius:99px;">NEW ENQUIRY FROM THE WEBSITE</span>
+<h1 style="font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:36px;line-height:1.15;color:#2C3036;margin:18px 0 6px 0;">{{ $json.nameHtml }}</h1>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6E7378;">Received {{ $json.sentLocal }}</div>
+</td></tr>
+
+<tr><td style="padding:22px 32px 0 32px;">
+<div style="font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;color:#6E7378;margin-bottom:6px;">EMAIL</div>
+<a href="mailto:{{ $json.emailHtml }}" style="font-family:Arial,Helvetica,sans-serif;font-size:17px;color:#55721C;text-decoration:underline;">{{ $json.emailHtml }}</a>
+</td></tr>
+
+<tr><td style="padding:24px 32px 0 32px;">
+<div style="font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;color:#6E7378;margin-bottom:8px;">THEIR MESSAGE</div>
+<div style="background:#E9EFE9;border-left:4px solid #6B8E23;border-radius:10px;padding:18px 22px;font-family:Georgia,'Times New Roman',serif;font-size:19px;line-height:1.55;color:#2C3036;">{{ $json.messageHtml }}</div>
+</td></tr>
+
+<tr><td style="padding:30px 32px 6px 32px;" align="left">
+<table role="presentation" cellpadding="0" cellspacing="0"><tr>
+<td style="background:#6B8E23;border-radius:99px;"><a href="{{ $json.replyHref }}" style="display:inline-block;padding:16px 34px;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:16px;color:#FFFFFF;text-decoration:none;">Reply to {{ $json.firstNameHtml }}</a></td>
+</tr></table>
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#6E7378;margin-top:14px;">This opens a reply addressed to {{ $json.emailHtml }}. Pressing Reply on this email works too.</div>
+</td></tr>
+
+<tr><td style="padding:26px 32px 30px 32px;">
+<div style="border-top:1px solid #D9DFD9;padding-top:18px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#8A8F95;">
+They agreed that their details are used only to reply to this enquiry (they ticked the privacy notice box on the form).<br>
+Sent from the contact form at cpdentalaesthetics.com
+</div>
+</td></tr>
+
+</table>
+</td></tr></table>
+</body></html>
+----- END OF BLOCK B -----
+
+5. Close the panel, then press Publish again.
+6. Send one test from the live website and look at the email.

@@ -95,6 +95,27 @@ const CLIENTS = ["Cristina"];
 
 const UPDATES = [
   {
+    id: 23,
+    date: "2026-10-17",
+    title: "Designed email for new enquiries, with Cristina's logo",
+    desc: "When someone fills in the contact form, Cristina now gets a clean branded email: her logo at the top, the patient's name, their message, the time received, and a big Reply button that opens a ready-addressed reply.",
+    clients: "all",
+    status: { "Cristina": [false, false, false] },
+    action: [
+      "Open ~/Desktop/n8n-email-update-instructions.txt and paste the two blocks into the two steps in n8n",
+      "Publish the n8n workflow, then send one test from the website"
+    ]
+  },
+  {
+    id: 22,
+    date: "2026-10-17",
+    title: "Contact form: removed the email-app fallback",
+    desc: "The contact form no longer points at an email app behind the scenes, which some browsers could flag as insecure. It only sends through the website's own secure route.",
+    clients: "all",
+    status: { "Cristina": [false, false, false] },
+    action: []
+  },
+  {
     id: 21,
     date: "2026-10-17",
     title: "Slimmer credentials and a children band on the home page",
