@@ -388,7 +388,17 @@ p a { border-bottom: 1px solid var(--line); }
 }
 .method-media-label { display: block; margin-top: 12px; color: var(--faint); }
 .method-copy .section-title { margin-bottom: 46px; }
-.method-steps { list-style: none; border-top: 1px solid var(--line); }
+.method-steps { list-style: none; border-top: 1px solid var(--line); position: relative; }
+/* desktop: one soft highlight that glides between the steps as you scroll */
+.method-cursor {
+  position: absolute; left: 0; right: 0; top: 0; height: 0;
+  background: rgba(168, 203, 160, 0.28);
+  border-radius: 6px;
+  pointer-events: none; z-index: 0;
+  will-change: transform, height;
+}
+.method-steps.is-scrub .method-step { position: relative; z-index: 1; transition: none; }
+.method-steps.is-scrub .method-step.is-active { background: transparent; }
 .method-step {
   padding: 26px 18px;
   border-bottom: 1px solid var(--line);
@@ -429,7 +439,7 @@ p a { border-bottom: 1px solid var(--line); }
      — her rendered size is limited by column width, not height */
   grid-template-columns: minmax(0, 0.68fr) minmax(0, 1.32fr);
   gap: clamp(16px, 1.8vw, 32px);
-  align-items: center;
+  align-items: stretch;          /* her column is as tall as the text: head level with the title, fade level with the button */
 }
 .story-text {
   max-width: 620px;
@@ -439,6 +449,7 @@ p a { border-bottom: 1px solid var(--line); }
 }
 .story-photo {
   margin: 0;
+  align-self: stretch; min-height: 0; position: relative;   /* her picture fills exactly the height of the text beside her */
   /* background-removed cutout: the shadow sits on the figure so it follows her faded outline, not a box */
   filter: drop-shadow(0 22px 44px rgba(44, 48, 54, 0.22));
   display: flex;
@@ -447,16 +458,12 @@ p a { border-bottom: 1px solid var(--line); }
   padding-right: clamp(6px, 0.8vw, 16px);   /* just off the edge, centred in her half */
 }
 .story-photo img {
-  /* as large as her column allows while the section still fits one screen */
-  width: 100%;
-  height: auto;
-  max-height: 82vh;
-  max-width: none;
-  object-fit: contain; object-position: bottom center;
-  /* her body is cropped at the bottom — fade it out instead of cutting hard */
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 6%, #000 72%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
-          mask-image: linear-gradient(to bottom, transparent 0%, #000 6%, #000 72%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
-  -webkit-mask-composite: source-in; mask-composite: intersect;   /* soft on all four sides, no rectangle */
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; max-width: none; max-height: none;
+  object-fit: contain; object-position: top center;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%), linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%), linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-composite: source-in; mask-composite: intersect;   /* soft sides and bottom, no rectangle */
 }
 /* the journey, read as a drawn route: each city arrives with its own dot,
    and the connecting line draws itself between them */
@@ -991,8 +998,8 @@ p a { border-bottom: 1px solid var(--line); }
   .method-media { max-width: 420px; }
   .case, .case-flip, .case-tall { grid-template-columns: 1fr; gap: 26px; margin-bottom: 90px; }
   .story-layout { grid-template-columns: 1fr; }
-  .story-photo { position: static; height: auto; max-width: 380px; margin: 0 auto; }
-  .story-photo img { position: static; width: 100%; height: auto; }
+  .story-photo { position: static; height: auto; max-width: 380px; margin: 0 auto; align-self: auto; }
+  .story-photo img { position: static; width: 100%; height: auto; object-fit: initial; }
   .case-flip .case-media { order: 0; }
   .case-flip .case-copy { order: 1; }
   .featured { grid-template-columns: 1fr; }
@@ -1152,65 +1159,67 @@ p a { border-bottom: 1px solid var(--line); }
 }
 
 
-/* ---------- Services page: the kids section ---------- */
+/* ---------- Services page: the kids section ----------
+   A slim, calm band: heading and intro on the left, the six items as a quiet
+   two-column list on the right, so it supports the main services, not overpowers them. */
 .kids {
   max-width: 1200px;
-  margin: clamp(50px, 8vh, 90px) auto clamp(60px, 9vh, 110px);
-  padding: clamp(44px, 6vw, 84px) clamp(22px, 5vw, 72px);
+  margin: clamp(40px, 6vh, 70px) auto clamp(50px, 7vh, 90px);
+  padding: clamp(28px, 3.4vw, 46px) clamp(22px, 4vw, 56px);
   background: var(--panel-tint);          /* the same pale mint as the testimonial cards */
-  border-radius: 34px;
+  border-radius: 28px;
   position: relative;
   overflow: hidden;
-  text-align: center;
+  text-align: left;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr);
+  column-gap: clamp(28px, 4.5vw, 72px);
+  align-items: start;
 }
-/* a few quiet shapes in the corners, so it feels playful without shouting */
 .kids::before, .kids::after {
   content: ""; position: absolute; border-radius: 50%;
-  background: var(--sage); opacity: 0.35; pointer-events: none;
+  background: var(--sage); opacity: 0.3; pointer-events: none;
 }
-.kids::before { width: 190px; height: 190px; top: -70px; left: -60px; }
-.kids::after  { width: 120px; height: 120px; bottom: -40px; right: -30px; }
-.kids-spark { position: absolute; color: var(--olive); opacity: 0.5; pointer-events: none; }
-.kids-spark.a { top: 34px; right: 12%; width: 22px; }
-.kids-spark.b { bottom: 46px; left: 9%; width: 16px; }
+.kids::before { width: 130px; height: 130px; top: -55px; left: -45px; }
+.kids::after  { display: none; }
+.kids-spark { display: none; }
 
-.kids .eyebrow { position: relative; }
-.kids-title { position: relative; margin-bottom: 18px; }
+.kids .eyebrow { position: relative; grid-column: 1; }
+.kids-title { position: relative; grid-column: 1; font-size: clamp(26px, 2.7vw, 36px); margin-bottom: 12px; }
 .kids-lead {
-  position: relative;
-  max-width: 52ch; margin: 0 auto clamp(34px, 5vw, 56px);
-  color: var(--muted); font-size: 17px;
+  position: relative; grid-column: 1;
+  max-width: 38ch; margin: 0;
+  color: var(--muted); font-size: 15px; line-height: 1.6;
 }
 .kids-grid {
   position: relative;
+  grid-column: 2; grid-row: 1 / span 3;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 1.6vw, 22px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(20px, 3vw, 44px);
   text-align: left;
 }
 .kid-card {
-  background: #fff;
-  border-radius: 26px;
-  padding: 28px 24px 26px;
-  box-shadow: 0 14px 34px rgba(44, 48, 54, 0.07);
-  transition: transform 0.45s cubic-bezier(.2,.7,.2,1), box-shadow 0.45s ease;
+  background: none; box-shadow: none; border-radius: 0;
+  padding: 14px 0 14px;
+  border-top: 1px solid rgba(85, 114, 28, 0.2);
+  display: grid; grid-template-columns: 34px 1fr; column-gap: 14px; align-items: start;
 }
-.kid-card:hover { transform: translateY(-6px); box-shadow: 0 22px 44px rgba(44, 48, 54, 0.11); }
+.kid-card:hover { transform: none; box-shadow: none; }
 .kid-icon {
-  width: 58px; height: 58px; border-radius: 50%;
-  background: rgba(168, 203, 160, 0.4);
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(168, 203, 160, 0.45);
   color: var(--olive-deep);
   display: grid; place-items: center;
-  margin-bottom: 18px;
+  margin: 2px 0 0; grid-row: 1 / span 2;
 }
-.kid-icon svg { width: 28px; height: 28px; }
+.kid-icon svg { width: 18px; height: 18px; }
 .kid-card h3 {
   font-family: var(--serif); font-weight: 400;
-  font-size: 24px; line-height: 1.15; color: var(--heading);
-  margin-bottom: 8px;
+  font-size: 19px; line-height: 1.2; color: var(--heading);
+  margin-bottom: 3px;
 }
-.kid-card p { color: var(--muted); font-size: 15px; line-height: 1.55; }
-.kids-cta { position: relative; margin-top: clamp(34px, 5vw, 52px); }
+.kid-card p { color: var(--muted); font-size: 13.5px; line-height: 1.5; grid-column: 2; }
 
 
 /* ---- faint black-and-white kids behind the heading (three ages) ---- */
@@ -1231,7 +1240,11 @@ p a { border-bottom: 1px solid var(--line); }
 .kids-bg-in img { width: 100%; height: 100%; object-fit: cover; }
 .kids > *:not(.kids-bg):not(.kids-spark) { position: relative; z-index: 1; }
 
-@media (max-width: 1000px) { .kids-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+  .kids { display: block; }
+  .kids-grid { margin-top: 22px; }
+  .kids-bg { opacity: 0.11; }   /* the faint photo stays quiet so the text reads clearly */
+}
 @media (max-width: 560px) {
   /* on phones only the laughing boy shows, big enough to read as a face */
   .kids-bg-in { grid-template-columns: 1fr; }

@@ -338,19 +338,62 @@
   });
 
   mm.add("not all and (max-width: 760px)", function () {
-    /* DESKTOP: video + steps sit side by side, so pin the pair and drive the
-       highlight from scroll — everything stays visible while pinned. */
-    ScrollTrigger.create({
-      trigger: ".method",
-      start: "top top",
-      end: "+=70%",
-      pin: ".method-pin",
-      refreshPriority: 1,   // higher = refreshed first: after the hero, before the rest
-      invalidateOnRefresh: true,
-      onUpdate: function (self) { setActiveStep(self.progress); },
-      onEnterBack: function () { if (analysisVideo && analysisVideo.paused) analysisVideo.play().catch(function () {}); }
+    /* DESKTOP: video + steps sit side by side, so pin the pair. Nothing "jumps" any
+       more: a soft highlight glides from step to step as you scroll, the steps fade
+       up and down in between, and the video drifts a touch, so every bit of scroll
+       moves something (before, the highlight only flipped three times and the rest
+       of the pinned scroll felt dead). */
+    var stepList = document.querySelector(".method-steps");
+    if (!stepList) return;          // pages without the Method section (Services, Cases) have nothing to do here
+    var cursor = document.createElement("span");
+    cursor.className = "method-cursor";
+    cursor.setAttribute("aria-hidden", "true");
+    stepList.insertBefore(cursor, stepList.firstChild);
+    stepList.classList.add("is-scrub");
+
+    var firstOn = function () { return steps[0]; };
+    var tl = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        trigger: ".method",
+        start: "top top",
+        end: "+=105%",
+        pin: ".method-pin",
+        scrub: 0.8,             // the scrub itself is eased, so it never feels stepped
+        refreshPriority: 1,     // higher = refreshed first: after the hero, before the rest
+        invalidateOnRefresh: true,
+        onUpdate: function (self) {
+          var t = self.animation.time();
+          setActiveStep(t < 0.85 ? 0 : (t < 2.05 ? 0.5 : 0.99));   // only recolours the small labels
+        },
+        onEnterBack: function () { if (analysisVideo && analysisVideo.paused) analysisVideo.play().catch(function () {}); }
+      }
     });
-    return clearSteps;
+    // start: highlight on step 1, the other two softly dimmed
+    tl.fromTo(cursor,
+      { y: function () { return steps[0].offsetTop; }, height: function () { return steps[0].offsetHeight; }, opacity: 1 },
+      { y: function () { return steps[0].offsetTop; }, height: function () { return steps[0].offsetHeight; }, opacity: 1, duration: 0.001 }, 0);
+    gsap.set(steps, { opacity: 0.4 });
+    gsap.set(steps[0], { opacity: 1 });
+    // short pause on step 1, then glide to step 2, a breath, glide to step 3, short pause.
+    // The glides are long compared with the pauses, so the highlight is nearly always travelling.
+    tl.to({}, { duration: 0.35 }, 0)
+      .to(cursor, { y: function () { return steps[1].offsetTop; }, height: function () { return steps[1].offsetHeight; }, ease: "power1.inOut", duration: 0.95 }, 0.35)
+      .to(steps[0], { opacity: 0.4, duration: 0.95 }, 0.35)
+      .to(steps[1], { opacity: 1, duration: 0.95 }, 0.35)
+      .to(cursor, { y: function () { return steps[2].offsetTop; }, height: function () { return steps[2].offsetHeight; }, ease: "power1.inOut", duration: 0.95 }, 1.55)
+      .to(steps[1], { opacity: 0.4, duration: 0.95 }, 1.55)
+      .to(steps[2], { opacity: 1, duration: 0.95 }, 1.55)
+      .to({}, { duration: 0.3 }, 2.5);
+    // the video breathes very slightly the whole way, so there is never a still stretch
+    tl.fromTo(".method-media video", { scale: 1 }, { scale: 1.045, duration: 2.8 }, 0);
+    return function () {
+      clearSteps();
+      stepList.classList.remove("is-scrub");
+      if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+      gsap.set(steps, { clearProps: "opacity" });
+      gsap.set(".method-media video", { clearProps: "transform" });
+    };
   });
   /* The video simply eases in — a plain fade with a whisper of scale, played
      once and finished well before the section pins. Deliberately NOT scrubbed
