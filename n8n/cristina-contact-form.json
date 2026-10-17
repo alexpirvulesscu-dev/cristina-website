@@ -74,10 +74,10 @@
         "sendTo": "info@cpdentalaesthetics.com",
         "subject": "={{ 'Consultation request — ' + $json.name }}",
         "emailType": "text",
-        "message": "={{ 'New consultation request from the website\\n\\nName: ' + $json.name + '\\nEmail: ' + $json.email + '\\n\\nMessage:\\n' + $json.message + '\\n\\nSent: ' + $json.sentAt + '\\nPage: ' + $json.page }}",
+        "message": "={{ 'New consultation request from the website. Press Reply to answer the patient\\n\\nName: ' + $json.name + '\\nEmail: ' + $json.email + '\\n\\nMessage:\\n' + $json.message + '\\n\\nSent: ' + $json.sentAt + '\\nPage: ' + $json.page }}",
         "options": {
           "appendAttribution": false,
-          "senderName": "Cristina Pirvulescu website",
+          "senderName": "Website enquiry",
           "replyTo": "={{ $json.email }}"
         }
       },
