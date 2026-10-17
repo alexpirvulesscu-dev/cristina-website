@@ -1278,6 +1278,7 @@ p a { border-bottom: 1px solid var(--line); }
 .cred .mono { display: block; color: var(--sage); font-size: 11px; margin: 0 0 8px 32px; }
 .cred p { color: rgba(240, 244, 248, 0.72); font-size: 14px; line-height: 1.55; margin-left: 32px; }
 .cred .reg { margin-top: 8px; font-size: 12px; }
+.cred .reg-num { font-size: 10.5px; letter-spacing: 0; white-space: nowrap; }   /* registration number stays on one line */
 .cred .reg a { color: var(--sage); border-bottom: 1px solid var(--line-light); }
 
 /* the children band on the home page */

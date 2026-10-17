@@ -153,7 +153,19 @@
   document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     a.addEventListener("click", function (e) {
       var target = document.querySelector(a.getAttribute("href"));
-      if (target) { e.preventDefault(); lenis.scrollTo(target, { offset: 0 }); }
+      // buttons jump straight to the section, no long glide. The pinned sections add height as
+      // the page scrolls, so the jump re-checks its landing spot a few frames and corrects itself.
+      if (target) {
+        e.preventDefault();
+        var tries = 0;
+        (function jump() {
+          lenis.resize();   // refresh Lenis' idea of the page length (the pins make it longer than it first thinks)
+          lenis.scrollTo(target.getBoundingClientRect().top + window.scrollY, { immediate: true, force: true });
+          requestAnimationFrame(function () {
+            if (Math.abs(target.getBoundingClientRect().top) > 2 && ++tries < 8) jump();
+          });
+        })();
+      }
     });
   });
 
