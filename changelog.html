@@ -95,12 +95,34 @@ const CLIENTS = ["Cristina"];
 
 const UPDATES = [
   {
+    id: 31,
+    date: "2026-10-17",
+    title: "No more hard box around the home page photos",
+    desc: "Her photo at the top of the home page and the photo in her story showed a faint rectangular edge around them. The edges now fade out softly, as intended.",
+    clients: "all",
+    status: { "Cristina": [true, true, true] },
+    action: []
+  },
+  {
+    id: 30,
+    date: "2026-10-17",
+    title: "Shorter, standard privacy notice and terms",
+    desc: "Both pages are now short, standard versions with only the information the law asks for. They no longer name the clinics where Cristina works or show a postal address. The privacy notice says that, if you ask for a consultation, your details are shared with the clinic where you will be seen.",
+    clients: "all",
+    status: { "Cristina": [false, false, false] },
+    action: [
+      "Ask Cristina for her CMSR membership number and the country that granted her dental degree",
+      "Have a Romanian lawyer check both pages and the CMSR advertising rules on before and after photos and testimonials",
+      "When her SRL is registered, ask Claude to switch both pages to the company's name, CUI and registered office"
+    ]
+  },
+  {
     id: 29,
     date: "2026-10-17",
     title: "Romanian version: home, services and cases",
     desc: "The site now has a full Romanian version of the home page, the Services page and the Cases page, written naturally for Romanian readers with the terms Romanian dentists use. A small EN / RO link in the menu switches between the two languages, and the contact form now thanks people in Romanian on the Romanian pages. The patient comments are shown translated, with a note that the originals are in English. The site's fonts were also extended, so Romanian letters like ă, ș and ț now look identical to the rest of the text instead of appearing heavier. The Romanian privacy and terms pages come next.",
     clients: "all",
-    status: { "Cristina": [false, false, false] },
+    status: { "Cristina": [true, true, true] },
     action: ["Ask Cristina to read the Romanian pages once and note anything that sounds wrong to a dentist"]
   },
   {
@@ -109,7 +131,7 @@ const UPDATES = [
     title: "Smoother Method section, tidier Her story, slimmer children's section",
     desc: "In the Method section a soft highlight now glides from step to step as you scroll, and the video drifts slightly, so there are no more stretches where scrolling seems to do nothing. In Her story the top of her head now lines up with the \"Her story\" title, and the bottom of her photo lines up with the button, with soft fading edges. On the Services page the children's section is about half the height, with its six items as a quiet list, so the main services stay the focus.",
     clients: "all",
-    status: { "Cristina": [false, false, false] },
+    status: { "Cristina": [true, true, true] },
     action: []
   },
   {
@@ -118,7 +140,7 @@ const UPDATES = [
     title: "Title glides into place, softer photo and video edges",
     desc: "On the home page, \"Subtle beauty. Precisely crafted.\" now shrinks and slides left until it becomes the heading above the intro paragraph, instead of fading away. Her photo at the top, the photo in her story and the facial analysis video now have soft, feathered edges instead of hard lines, and the green corner brackets around the video are gone. On phones the title still fades as before.",
     clients: "all",
-    status: { "Cristina": [false, false, false] },
+    status: { "Cristina": [true, true, true] },
     action: []
   },
   {
@@ -127,7 +149,7 @@ const UPDATES = [
     title: "Small clean-ups and instant jump on buttons",
     desc: "Removed a few extra lines of text (the note under the method button, the caption under the facial analysis video, the qualification placeholder and the register link in credentials, and the extra 'Book a first visit' button on Services). The GDC number now fits on one line. The booking buttons now jump straight to the form instead of gliding.",
     clients: "all",
-    status: { "Cristina": [false, false, false] },
+    status: { "Cristina": [true, true, true] },
     action: []
   },
   {
