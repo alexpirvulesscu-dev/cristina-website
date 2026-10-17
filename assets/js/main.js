@@ -344,6 +344,7 @@
        moves something (before, the highlight only flipped three times and the rest
        of the pinned scroll felt dead). */
     var stepList = document.querySelector(".method-steps");
+    if (!stepList) return;          // pages without the Method section (Services, Cases) have nothing to do here
     var cursor = document.createElement("span");
     cursor.className = "method-cursor";
     cursor.setAttribute("aria-hidden", "true");
