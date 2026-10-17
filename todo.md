@@ -3,7 +3,6 @@
 ## Waiting on Cristina
 - Qualification, university and country (shown next to her GDC number)
 - LR Clinics details (address) and which services she provides there
-- Text for the five new cases (orange placeholders on the Cases page)
 - Check the wording of Cerasela's case
 - Privacy notice gaps: legal name, company number, address, retention period, hosting locations (adviser to check Romania and UK)
 

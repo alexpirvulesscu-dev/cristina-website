@@ -721,57 +721,7 @@ p a { border-bottom: 1px solid var(--line); }
   width: 36px; height: 36px; border-radius: 50%; font-size: 20px; line-height: 1; cursor: pointer;
 }
 
-/* credentials — a distinct dark green band so the trust marks read as a
-   separate register from the testimonials above */
-.credbar { background: var(--hero-dark); }
-.credbar-inner {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: clamp(72px, 12vh, 128px) var(--gutter);
-}
-/* the band now announces itself with its own heading rather than sitting
-   as an unlabelled strip of small print */
-.credbar-head { text-align: center; margin-bottom: clamp(40px, 6vh, 68px); }
-.credbar-head .eyebrow { color: var(--sage); }
-.credbar-head .section-title { color: #f0f4f8; }
-.credbar-head .section-title em { color: var(--sage); }
-
-.credgrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(18px, 2.2vw, 30px);
-}
-.credit {
-  background: rgba(240, 244, 248, 0.05);
-  border: 1px solid var(--line-light);
-  border-radius: 14px;
-  padding: clamp(28px, 3vw, 38px) clamp(24px, 2.4vw, 32px);
-  display: flex; flex-direction: column; gap: 16px;
-  transition: transform 0.4s ease, border-color 0.4s ease, background 0.4s ease;
-}
-.credit:hover {
-  transform: translateY(-6px);
-  border-color: var(--sage);
-  background: rgba(240, 244, 248, 0.09);
-}
-/* a sage "verified" tick — the visual anchor that makes the claim register */
-.credit-mark {
-  width: 46px; height: 46px; flex: none;
-  border-radius: 50%;
-  background: var(--sage);
-  color: var(--hero-dark);
-  display: grid; place-items: center;
-}
-.credit-mark svg { width: 22px; height: 22px; }
-.credit-title {
-  font-family: var(--serif); font-weight: 400;
-  font-size: clamp(25px, 2.3vw, 32px);
-  line-height: 1.1;
-  color: #f0f4f8;
-  display: flex; flex-direction: column; gap: 9px;
-}
-.credit-title .mono { color: var(--sage); font-size: 11.5px; }
-.credit p { color: rgba(240, 244, 248, 0.72); font-size: 15.5px; line-height: 1.65; }
+/* credentials and the children band: see "home page bands" at the end of this file */
 
 /* ---------- consultation ---------- */
 .consult { padding: clamp(100px, 15vh, 180px) var(--gutter); }
@@ -1039,7 +989,6 @@ p a { border-bottom: 1px solid var(--line); }
   .watch { width: 100%; justify-content: center; }
   .vid-dialog { width: 100vw; border-radius: 0; }
   .ba-pair img { aspect-ratio: 1 / 1.1; }
-  .credgrid { grid-template-columns: 1fr; }
   .loc-grid { grid-template-columns: 1fr; }
   .consult-inner { grid-template-columns: 1fr; }
   .nav-links { gap: 20px; font-size: 13px; }
@@ -1166,7 +1115,7 @@ p a { border-bottom: 1px solid var(--line); }
 
   /* trim the tall desktop section paddings so the page isn't endless to scroll */
   .trust-inner { padding: clamp(56px, 9vh, 90px) var(--gutter) clamp(48px, 7vh, 70px); }
-  .credbar-inner { padding: clamp(52px, 9vh, 88px) var(--gutter); }
+  .creds { padding: clamp(40px, 7vh, 64px) var(--gutter); }
   .locations { padding: clamp(56px, 9vh, 90px) var(--gutter); }
   .consult { padding: clamp(64px, 10vh, 110px) var(--gutter); }
   .services { padding: clamp(96px, 14vh, 150px) var(--gutter) clamp(64px, 9vh, 100px); }
@@ -1191,7 +1140,7 @@ p a { border-bottom: 1px solid var(--line); }
   .hero-h2 { font-size: clamp(35px, 10.7vw, 54px); top: 52vh; }
   .hero-sub { font-size: 15px; }
   .section-title { font-size: clamp(32px, 8.5vw, 46px); }
-  .credit-title, .loc-name { font-size: clamp(23px, 6.5vw, 30px); }
+  .loc-name { font-size: clamp(23px, 6.5vw, 30px); }
   .serif-pull { font-size: 21px; }
   .form-lead { font-size: 18px; }
 }
@@ -1202,9 +1151,6 @@ p a { border-bottom: 1px solid var(--line); }
   html { scroll-behavior: auto; }
 }
 
-/* GDC card: registration details under the description */
-.credit-reg { font-size: 12.5px; line-height: 1.5; margin-top: 2px; }
-.credit-reg a { color: var(--sage); border-bottom: 1px solid var(--line-light); }
 
 /* ---------- Services page: the kids section ---------- */
 .kids {
@@ -1238,7 +1184,7 @@ p a { border-bottom: 1px solid var(--line); }
 .kids-grid {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(14px, 1.6vw, 22px);
   text-align: left;
 }
@@ -1300,3 +1246,73 @@ p a { border-bottom: 1px solid var(--line); }
 .legal .todo-copy { font-size: inherit; }
 .legal p { margin: 0 0 14px; }
 .legal h2 + p { margin-top: 0; }
+
+/* ---------- home page bands ---------- */
+/* credentials: one slim dark band, three across */
+.creds {
+  background: var(--hero-dark);
+  padding: clamp(40px, 6vw, 64px) var(--gutter);
+}
+.creds-inner {
+  max-width: 1180px; margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 2.2fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: start;
+}
+.creds-head .eyebrow { color: var(--sage); margin-bottom: 10px; }
+.creds-head .section-title { color: #f0f4f8; font-size: clamp(30px, 3.2vw, 42px); margin-bottom: 22px; }
+.creds-head .section-title em { color: var(--sage); }
+.creds-list {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 2.4vw, 36px);
+}
+.cred { border-top: 1px solid var(--line-light); padding-top: 18px; }
+.cred-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.cred-tick {
+  width: 22px; height: 22px; border-radius: 50%; flex: none;
+  background: var(--sage); color: var(--hero-dark);
+  display: grid; place-items: center;
+}
+.cred-tick svg { width: 12px; height: 12px; }
+.cred h3 { font-family: var(--serif); font-weight: 400; font-size: 22px; color: #f0f4f8; line-height: 1.1; }
+.cred .mono { display: block; color: var(--sage); font-size: 11px; margin: 0 0 8px 32px; }
+.cred p { color: rgba(240, 244, 248, 0.72); font-size: 14px; line-height: 1.55; margin-left: 32px; }
+.cred .reg { margin-top: 8px; font-size: 12px; }
+.cred .reg a { color: var(--sage); border-bottom: 1px solid var(--line-light); }
+
+/* the children band on the home page */
+.kids-home {
+  max-width: 1180px; margin: clamp(48px, 7vw, 84px) auto;
+  padding: 0 var(--gutter);
+}
+.kids-home-box {
+  position: relative; overflow: hidden;
+  background: var(--panel-tint);
+  border-radius: 30px;
+  padding: clamp(30px, 4vw, 48px) clamp(26px, 4.5vw, 60px);
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 24px; align-items: center;
+}
+.kids-home-box::before {
+  content: ""; position: absolute; width: 150px; height: 150px; border-radius: 50%;
+  background: var(--sage); opacity: 0.3; left: -50px; top: -60px; pointer-events: none;
+}
+.kids-home-copy { position: relative; z-index: 1; }
+.kids-home-copy .section-title { font-size: clamp(30px, 3.4vw, 44px); margin: 6px 0 14px; }
+.kids-home-copy p { color: var(--muted); max-width: 54ch; font-size: 16px; }
+.kids-home-copy .btn-ghost { display: inline-block; margin-top: 18px; }
+.kids-home-photo {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 46%;
+  z-index: 0; pointer-events: none;
+  opacity: 0.32;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%);
+          mask-image: linear-gradient(90deg, transparent 0%, #000 55%);
+}
+.kids-home-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; filter: grayscale(1) contrast(1.05); }
+
+@media (max-width: 900px) {
+  .creds-inner { grid-template-columns: 1fr; }
+  .creds-list { grid-template-columns: 1fr; gap: 22px; }
+  .kids-home-box { grid-template-columns: 1fr; }
+  .kids-home-photo { width: 100%; opacity: 0.16; -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 60%); mask-image: linear-gradient(180deg, transparent 0%, #000 60%); }
+}

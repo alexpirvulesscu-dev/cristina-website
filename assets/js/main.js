@@ -434,8 +434,8 @@
     scrollTrigger: { trigger: ".testimonials", start: "top 80%" },
     y: 40, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.08
   });
-  gsap.from(".credit", {
-    scrollTrigger: { trigger: ".credbar", start: "top 85%" },
+  gsap.from(".cred", {
+    scrollTrigger: { trigger: ".creds", start: "top 85%" },
     y: 30, opacity: 0, duration: 0.9, ease: "power2.out", stagger: 0.12
   });
 
