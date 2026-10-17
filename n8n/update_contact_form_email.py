@@ -2,6 +2,7 @@
    Run it from the n8n/ folder of this project:
      python3 update_contact_form_email.py            CHECK ONLY: shows what would change, changes NOTHING
      python3 update_contact_form_email.py --apply    changes the two steps in your n8n
+     python3 update_contact_form_email.py --publish  also makes sure the workflow is switched on (published)
  It changes ONLY two steps, using the text saved in cristina-contact-form.json:
    1. "Check and tidy"              (the code that prepares the email text)
    2. "Send to Cristina's inbox"    (subject, email type HTML, and the email design)
@@ -31,15 +32,15 @@ WANT_GMAIL = {k: want_gmail[k] for k in ('subject', 'emailType', 'message')}
 # the key (never printed)
 env = {}
 keyfile = os.path.expanduser(opt('--env', DEFAULT_KEYFILE))
-if os.path.exists(keyfile):
+if '--env' in ARGS and os.path.exists(keyfile):
     for line in open(keyfile, encoding='utf-8'):
         line = line.strip()
         if line and not line.startswith('#') and '=' in line:
             k, v = line.split('=', 1)
             env[k.strip()] = v.strip().strip('"').strip("'")
-elif not os.environ.get('N8N_API_KEY_WRITE'):
-    sys.exit('STOP: no key found. Set N8N_API_KEY_WRITE in your Terminal, or use --env /path/to/key/file')
-key = os.environ.get('N8N_API_KEY_WRITE') or env.get('N8N_API_KEY_WRITE') or env.get('N8N_API_KEY')
+PRIVATE_KEY = os.path.expanduser('~/.config/retiply/n8n-key')   # one line, only the key; chmod 600
+private = open(PRIVATE_KEY).read().strip() if os.path.exists(PRIVATE_KEY) else None
+key = os.environ.get('N8N_API_KEY_WRITE') or private or env.get('N8N_API_KEY_WRITE') or env.get('N8N_API_KEY')
 if not key:
     sys.exit('STOP: no N8N_API_KEY_WRITE in the key file.')
 base = (opt('--url') or env.get('N8N_BASE_URL') or env.get('N8N_URL') or DEFAULT_URL).rstrip('/')
@@ -81,6 +82,8 @@ for n in wf['nodes']:
                 n['parameters'][k] = v
                 changes.append('"%s": %s updated' % (n['name'], k))
 
+if '--publish' in ARGS and not wf.get('active'):
+    changes.append('workflow is OFF: will be switched on (published)')
 if not changes:
     print('Already up to date. Nothing to change.')
     sys.exit(0)
@@ -89,13 +92,16 @@ for c in changes:
     print('  -', c)
 print('Everything else (Gmail login, webhook, other steps) is left exactly as it is.')
 
-if '--apply' not in ARGS:
-    print('\nCHECK ONLY. Nothing was changed. Run again with --apply to make the change.')
+if '--apply' not in ARGS and '--publish' not in ARGS:
+    print('\nCHECK ONLY. Nothing was changed. Run again with --apply (and --publish to switch it on).')
     sys.exit(0)
 
 # only the fields the n8n API accepts on update
 body = {'name': wf['name'], 'nodes': wf['nodes'], 'connections': wf['connections'], 'settings': wf.get('settings', {})}
-call('PUT', '/workflows/' + wf['id'], body)
+if any('updated' in c for c in changes):
+    call('PUT', '/workflows/' + wf['id'], body)
+if '--publish' in ARGS and not wf.get('active'):
+    call('POST', '/workflows/' + wf['id'] + '/activate')
 after = call('GET', '/workflows/' + wf['id'])
 ok = (next(n for n in after['nodes'] if n['name'] == 'Check and tidy')['parameters']['jsCode'] == want_code and
       all(next(n for n in after['nodes'] if n['type'] == GMAIL)['parameters'].get(k) == v for k, v in WANT_GMAIL.items()))
