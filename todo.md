@@ -23,4 +23,4 @@
 ## Next updates (plan first)
 - Kids section on the Services page (playful but on brand)
 - Privacy policy, terms and any other documents
-- Romanian version: home, services and cases are built under /ro/ (EN | RO switch in the menu). Still to do: the Romanian privacy and terms pages (after the legal changes are merged). Cristina, a Romanian-speaking dentist, should read all the Romanian text once for wording and terms. Julie's story video is still in English, so it needs Romanian subtitles if wanted. Optional: add the page language to the enquiry email (small n8n change).
+- Romanian version: home, services and cases are built under /ro/ (EN | RO switch in the menu). The Romanian privacy and terms pages are built too (lawyer should read both languages). Cristina, a Romanian-speaking dentist, should read all the Romanian text once for wording and terms. Julie's story video is still in English, so it needs Romanian subtitles if wanted. Optional: add the page language to the enquiry email (small n8n change).
